@@ -2,18 +2,19 @@
 
 ## 👥 팀 소개
 
- 🐶 **Dog Throw**
+🐶 **Dog Throw**
+
 > 📋 [팀 노션 바로가기](https://app.notion.com/p/cd1db44120f68291ac4a01bf4bd976da?v=581db44120f682da931708f6c690ab7c&source=copy_link)
 
-| 이름 | GitHub |
-|------|--------|
+| 이름   | GitHub                                               |
+| ------ | ---------------------------------------------------- |
 | 정민주 | [@quothraven1122](https://github.com/quothraven1122) |
-| 김대영 | [@daeyeong1573](https://github.com/daeyeong1573) |
-| 조서현 | [@sxohyuni](https://github.com/sxohyuni) |
-| 윤다정 | [@torang1013](https://github.com/torang1013) |
-| 이진태 | [@jeantae](https://github.com/jeantae) |
-| 방민재 | [@extermins](https://github.com/extermins) |
-| 이은범 | [@3unbum](https://github.com/3unbum)|
+| 김대영 | [@daeyeong1573](https://github.com/daeyeong1573)     |
+| 조서현 | [@sxohyuni](https://github.com/sxohyuni)             |
+| 윤다정 | [@torang1013](https://github.com/torang1013)         |
+| 이진태 | [@jeantae](https://github.com/jeantae)               |
+| 방민재 | [@extermins](https://github.com/extermins)           |
+| 이은범 | [@3unbum](https://github.com/3unbum)                 |
 
 ---
 
@@ -28,9 +29,32 @@
 
 ## 🛠 기술 스택
 
-| 구분 | 기술 |
-|------|------|
-| **Frontend** | Next.js, Tailwind CSS |
-| **Backend** | Express.js, Prisma ORM |
-| **Database** | PostgreSQL |
+| 구분          | 기술                          |
+| ------------- | ----------------------------- |
+| **Frontend**  | Next.js, Tailwind CSS         |
+| **Backend**   | Express.js, Prisma ORM        |
+| **Database**  | PostgreSQL                    |
 | **공통 Tool** | Git & GitHub, Discord, Notion |
+
+## 📁 프로젝트 구조
+
+```
+docthru/
+├── http/
+├── prisma/
+└── src/
+    ├── app.js
+    ├── modules/
+    │   ├── challenge/
+    │   │   ├── challengeRoute.js
+    │   │   ├── challengeController.js
+    │   │   ├── challengeService.js
+    │   │   ├── challengeRepository.js
+    │   │   └── challengeSchema.js
+    │   ├── feedback/
+    │   └── user/
+    ├── common/
+    │   ├── middlewares/
+    │   ├── utils/
+    │   └── configs/
+```
