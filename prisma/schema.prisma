@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER // 일반멤버
+  ADMIN // 관리자
+}
+
+enum Grade {
+  NORMAL // 일반인
+  EXPERT // 전문가
+}
+
+enum DocType {
+  OFFICIAL // 공식문서
+  BLOG //블로그
+}
+
+enum ChallengeStatus {
+  WAITING // 승인 대기
+  APPROVED // 승인
+  REJECTED // 거절
+  DELETED // 삭제
+}
+
+enum Field {
+  NEXTJS
+  API
+  CAREER
+  MODERNJS
+  WEB
+}
+
+// 알림 
+enum TargetType {
+  CHALLENGE
+  WORK
+  FEEDBACK
+  FAVORITE
+}
+
+enum Type {
+  DELETED
+  MODIFY
+  CREATE
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  nickname String @unique
+  password String
+  role     Role   @default(MEMBER)
+  grade    Grade  @default(NORMAL)
+
+  //공통으로 다넣을거임?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  challengers  Challenger[]
+  translations Translation[]
+  feedbacks    Feedback[]
+  favorites    Favorite[]
+  alarms       Alarm[]
+}
+
+model Challenge {
+  id           String          @id @default(uuid())
+  title        String
+  content      String
+  link         String
+  field        Field
+  doctype      DocType
+  deadline     DateTime //마감기한
+  headcount    Int //허용인원
+  status       ChallengeStatus @default(WAITING)
+  // 챌린지 승인 관련
+  Approver     String
+  rejectedAt   DateTime
+  rejectReason String
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+
+  challengers  Challenger[]
+  translations Translation[]
+}
+
+model Challenger {
+  id          String @id @default(uuid())
+  userId      String
+  challengeId String
+  isAuthor    String // 챌린지 주인 Id
+
+  Challenge Challenge @relation(fields: [challengeId], references: [id])
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model Translation {
+  id          String @id @default(uuid())
+  userId      String
+  challengeId String
+  content     String
+
+  //생성, 수정, 삭제
+  createdAt     DateTime @default(now())
+  createdBy     String
+  updatedAt     DateTime @updatedAt
+  updatedBy     String
+  deletedAt     DateTime
+  deletedBy     String
+  deletedReason String
+
+  USER      User       @relation(fields: [userId], references: [id])
+  Challenge Challenge  @relation(fields: [challengeId], references: [id])
+  Feedbacks Feedback[]
+  favorites Favorite[]
+}
+
+model Feedback {
+  id            String @id @default(uuid())
+  comment       String
+  userId        String
+  translationId String
+
+  createdAt     DateTime @default(now())
+  createdBy     String
+  updatedAt     DateTime @updatedAt
+  updatedBy     String
+  deletedAt     DateTime
+  deletedBy     String
+  deletedReason String
+
+  User        User        @relation(fields: [userId], references: [id])
+  Translation Translation @relation(fields: [translationId], references: [id])
+  favorites   Favorite[]
+}
+
+model Favorite {
+  id            String @id @default(uuid())
+  userId        String
+  feedbackId    String
+  translationId String
+
+  Translation Translation @relation(fields: [translationId], references: [id])
+  Feedback    Feedback    @relation(fields: [feedbackId], references: [id])
+  USER        User        @relation(fields: [userId], references: [id])
+}
+
+model Alarm {
+  id         String     @id @default(uuid())
+  userId     String
+  message    String
+  readcheck  Boolean
+  type       Type
+  createdAt  DateTime   @default(now())
+  targetId   String
+  targetType TargetType
+
+  User User @relation(fields: [userId], references: [id])
+}
