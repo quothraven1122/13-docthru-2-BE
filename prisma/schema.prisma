@@ -43,15 +43,7 @@ enum Field {
   WEB
 }
 
-// 알림 
-enum TargetType {
-  CHALLENGE
-  WORK
-  FEEDBACK
-  FAVORITE
-}
-
-enum Type {
+enum AlarmType {
   DELETED
   MODIFY
   CREATE
@@ -87,16 +79,16 @@ model Challenge {
   headcount    Int //허용인원
   status       ChallengeStatus @default(WAITING)
   // 챌린지 승인 관련
-  Approver     String
-  rejectedAt   DateTime
-  rejectReason String
+  Approver     String?
+  rejectedAt   DateTime?
+  rejectReason String?
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   createdBy String
-  updatedAt DateTime @updatedAt
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+  deletedAt DateTime?
+  deletedBy String?
 
   challengers  Challenger[]
   translations Translation[]
@@ -108,29 +100,32 @@ model Challenger {
   challengeId String
   isAuthor    String // 챌린지 주인 Id
 
-  Challenge Challenge @relation(fields: [challengeId], references: [id])
-  User      User      @relation(fields: [userId], references: [id])
+  Challenge    Challenge     @relation(fields: [challengeId], references: [id])
+  User         User          @relation(fields: [userId], references: [id])
+  translations Translation[]
 }
 
 model Translation {
-  id          String @id @default(uuid())
-  userId      String
-  challengeId String
-  content     String
+  id           String @id @default(uuid())
+  userId       String
+  challengeId  String
+  challengerId String
+  content      String
 
   //생성, 수정, 삭제
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
   createdBy     String
-  updatedAt     DateTime @updatedAt
-  updatedBy     String
-  deletedAt     DateTime
-  deletedBy     String
-  deletedReason String
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?
+  deletedAt     DateTime?
+  deletedBy     String?
+  deletedReason String?
 
-  USER      User       @relation(fields: [userId], references: [id])
-  Challenge Challenge  @relation(fields: [challengeId], references: [id])
-  Feedbacks Feedback[]
-  favorites Favorite[]
+  Challenger Challenger @relation(fields: [challengerId], references: [id])
+  User       User       @relation(fields: [userId], references: [id])
+  Challenge  Challenge  @relation(fields: [challengeId], references: [id])
+  Feedbacks  Feedback[]
+  Favorites  Favorite[]
 }
 
 model Feedback {
@@ -139,13 +134,13 @@ model Feedback {
   userId        String
   translationId String
 
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
   createdBy     String
-  updatedAt     DateTime @updatedAt
-  updatedBy     String
-  deletedAt     DateTime
-  deletedBy     String
-  deletedReason String
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?
+  deletedAt     DateTime?
+  deletedBy     String?
+  deletedReason String?
 
   User        User        @relation(fields: [userId], references: [id])
   Translation Translation @relation(fields: [translationId], references: [id])
@@ -155,23 +150,22 @@ model Feedback {
 model Favorite {
   id            String @id @default(uuid())
   userId        String
-  feedbackId    String
   translationId String
 
   Translation Translation @relation(fields: [translationId], references: [id])
-  Feedback    Feedback    @relation(fields: [feedbackId], references: [id])
-  USER        User        @relation(fields: [userId], references: [id])
+  User        User        @relation(fields: [userId], references: [id])
+  feedback    Feedback?   @relation(fields: [feedbackId], references: [id])
+  feedbackId  String?
 }
 
 model Alarm {
-  id         String     @id @default(uuid())
-  userId     String
-  message    String
-  readcheck  Boolean
-  type       Type
-  createdAt  DateTime   @default(now())
-  targetId   String
-  targetType TargetType
+  id        String    @id @default(uuid())
+  userId    String
+  message   String
+  readcheck Boolean
+  type      AlarmType
+  createdAt DateTime  @default(now())
+  targetId  String
 
   User User @relation(fields: [userId], references: [id])
 }
