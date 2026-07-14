@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER // 일반멤버
+  ADMIN // 관리자
+}
+
+enum Grade {
+  NORMAL // 일반인
+  EXPERT // 전문가
+}
+
+enum DocType {
+  OFFICIAL // 공식문서
+  BLOG //블로그
+}
+
+enum ChallengeStatus {
+  WAITING // 승인 대기
+  APPROVED // 승인
+  REJECTED // 거절
+}
+
+enum Field {
+  NEXTJS
+  API
+  CAREER
+  MODERNJS
+  WEB
+}
+
+// 알림 
+enum TargetType {
+  CHALLENGE
+  WORK
+  FEEDBACK
+  FAVORITE
+}
+
+enum NotificationAction {
+  CREATED
+  MODIFIED
+  DELETED
+}
+
+model User {
+  id                    String            @id @default(uuid())
+  email                 String            @unique
+  password              String 
+  nickname              String            @unique
+  role                  Role              @default(MEMBER)
+  grade                 Grade             @default(NORMAL)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @default(now()) @updatedAt
+
+  createdChallenges     Challenge[]       @relation("ChallengeCreator")
+  approvedChallenges    Challenge[]       @relation("ChallengeApprover")
+  deletedChallenges     Challenge[]       @relation("ChallengeDeleter") 
+
+  participations        Participation[]      
+  deletedTranslations   Translation[]     @relation("TranslationDeleter")     
+
+  reviews               Review[]          @relation("ReviewReviewer")
+  deletedReviews        Review[]          @relation("ReviewDeleter")
+
+  notifications         Notification[]
+
+  likes                 Like[]
+
+  @@map("users")
+}
+
+model Challenge {
+  id                String           @id @default(uuid())
+  title             String
+  link              String
+  content           String
+  field             Field
+  docType           DocType
+  deadline          DateTime
+  headcount         Int
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @default(now()) @updatedAt
+  status            ChallengeStatus  @default(WAITING)
+  approvedAt        DateTime?
+  rejectReason      String?
+  deletedAt         DateTime?
+  deletionReason    String?
+
+  creatorId         String           
+  creator           User             @relation("ChallengeCreator", fields: [creatorId], references: [id])
+  approverId        String?
+  approver          User?            @relation("ChallengeApprover", fields: [approverId], references: [id])
+  deleterId         String?
+  deleter           User?            @relation("ChallengeDeleter", fields: [deleterId], references: [id])
+
+  participations    Participation[]
+
+  @@map("challenges")
+}
+
+model Participation {
+  id              String        @id @default(uuid())
+  createdAt       DateTime      @default(now())
+
+  participatorId  String
+  participator    User          @relation(fields: [participatorId], references: [id])
+
+  challengeId     String
+  challenge       Challenge     @relation(fields: [challengeId], references: [id])
+
+  translation     Translation
+
+  @@map("participations")
+}
+
+model Translation {
+  id              String          @id @default(uuid())
+  content         String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  deletedAt       DateTime?
+  deletionReason  String?
+
+  participationId String          @unique
+  participation   Participation   @relation(fields: [participationId], references: [id])
+  deleterId       String?
+  deleter         User?           @relation("TranslationDeleter", fields: [deleterId], references: [id])
+
+  reviews         Review[]
+
+  likes           Like[]
+
+  @@map("translations")
+}
+
+model Review {
+  id              String        @id @default(uuid())
+  content         String  
+  createdAt       DateTime      @default(now())
+  deletedAt       DateTime? 
+  deletionReason  String? 
+
+  reviewerId      String  
+  reviewer        User          @relation("ReviewReviewer", fields: [reviewerId], references: [id])
+  deleterId       String?
+  deleter         User?         @relation("ReviewDeleter", fields: [deleterId], references: [id])
+
+  translationId   String        
+  translation     Translation   @relation(fields: [translationId], references: [id])
+
+  @@map("reviews")
+}
+
+model Like {
+  id              String        @id @default(uuid())
+  createdAt       DateTime      @default(now())
+
+  likerId         String  
+  liker           User          @relation(fields: [likerId], references: [id])
+
+  translationId   String  
+  translation     Translation   @relation(fields: [translationId], references: [id])
+
+  @@unique([likerId, translationId])
+  @@map("likes")
+}
+
+model Notification {
+  id            String              @id @default(uuid())
+  message       String
+  createdAt     DateTime            @default(now())
+  isRead        Boolean             @default(false)
+  targetId      String
+  targetType    TargetType
+  action        NotificationAction
+
+  userId        String
+  user          User                @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
