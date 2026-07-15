@@ -16,7 +16,7 @@
     "prepare": "husky"
   },
   "imports": {
-    "#/*": "./src/*"
+    "#src/*": "./src/*"
   },
   "repository": {
     "type": "git",

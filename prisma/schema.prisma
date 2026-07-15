@@ -116,7 +116,7 @@ model Participation {
   challengeId     String
   challenge       Challenge     @relation(fields: [challengeId], references: [id])
 
-  translation     Translation
+  translation     Translation?
 
   @@map("participations")
 }
@@ -130,7 +130,7 @@ model Translation {
   deletionReason  String?
 
   participationId String          @unique
-  participation   Participation   @relation(fields: [participationId], references: [id])
+  participation   Participation?  @relation(fields: [participationId], references: [id])
   deleterId       String?
   deleter         User?           @relation("TranslationDeleter", fields: [deleterId], references: [id])
 
