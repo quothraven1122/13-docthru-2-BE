@@ -1,0 +1,12 @@
+@local_url = http://localhost:3000
+
+### 회원가입
+POST {{local_url}}/auth/register
+Content-Type: application/json
+
+{
+  "email" : "rlaeodud1232221@email.com",
+  "nickname": "김123",
+  "password" : "123123123",
+  "passwordConfirm" : "123123123"
+}
