@@ -2,6 +2,7 @@ import "#src/env.js";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import authRouter from "#src/modules/auth/authRoute.js";
 
 const app = express();
 const PORT = 3000;
@@ -9,6 +10,8 @@ const PORT = 3000;
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/auth", authRoute);
 
 app.get("/", (req, res) => {
   res.send("서버가 잘 동작하고 있어요! 🎉");
