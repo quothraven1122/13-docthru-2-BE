@@ -118,6 +118,7 @@ model Participation {
 
   translation     Translation?
 
+  @@unique([participatorId, challengeId])
   @@map("participations")
 }
 
