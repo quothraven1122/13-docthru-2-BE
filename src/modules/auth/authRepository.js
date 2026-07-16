@@ -1,9 +1,23 @@
+import prisma from "#src/common/configs/prisma.js";
+
 export const authRepository = {
-  findByEmail(email) {},
+  findByEmail(email) {
+    return prisma.user.findUnique({ where: { email } });
+  },
 
-  findById(id) {},
+  findByNickname(nickname) {
+    return prisma.user.findUnique({ where: { nickname } });
+  },
 
-  create(data) {},
+  findById(id) {
+    return prisma.user.findUnique({ where: { id } });
+  },
 
-  updateRefreshToken(id, refreshToken) {},
+  create(data) {
+    return prisma.user.create({ data });
+  },
+
+  updateRefreshToken(id, refreshToken) {
+    return prisma.user.update({ where: { id }, data: { refreshToken } });
+  },
 };
