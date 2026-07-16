@@ -33,11 +33,12 @@ const options = {
         },
         RegisterRequest: {
           type: "object",
-          required: ["email", "nickname", "password"],
+          required: ["email", "nickname", "password", "passwordConfirm"],
           properties: {
             email: { type: "string", format: "email", example: "user@example.com" },
             nickname: { type: "string", minLength: 2, maxLength: 10, example: "닉네임" },
             password: { type: "string", minLength: 9, example: "password123" },
+            passwordConfirm: { type: "string", minLength: 9, example: "password123" },
           },
         },
         RegisterResponse: {
