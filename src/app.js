@@ -2,8 +2,10 @@ import "#src/env.js";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
 import authRouter from "#src/modules/auth/authRoute.js";
 import errorHandler from "#src/common/middlewares/errorHandler.js";
+import { swaggerSpec } from "#src/common/configs/swagger.js";
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +13,8 @@ const PORT = 3000;
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/auth", authRouter);
 
