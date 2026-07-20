@@ -51,6 +51,8 @@ export const authService = {
     return { user: filterSensitiveUserData(user), accessToken, refreshToken };
   },
 
-  async logout(userId) {},
+  async logout(userId) {
+    await authRepository.updateRefreshToken(userId, null);
+  },
   async refresh(userId, refreshToken) {},
 };

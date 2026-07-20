@@ -1,6 +1,7 @@
 import express from "express";
 import { authController } from "./authController.js";
 import { validate } from "#src/common/middlewares/validate.js";
+import { authenticate } from "#src/common/middlewares/authenticate.js";
 import { authSchema } from "./authSchema.js";
 
 const authRouter = express.Router();
@@ -84,5 +85,34 @@ authRouter.post("/register", validate(authSchema.registerSchema), authController
  *               $ref: "#/components/schemas/ErrorResponse"
  */
 authRouter.post("/login", validate(authSchema.loginSchema), authController.login);
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: 로그아웃
+ *     description: DB에 저장된 refresh token을 제거하고 refresh token 쿠키를 삭제합니다. access token(Authorization 헤더)이 필요합니다.
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 로그아웃 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 로그아웃되었습니다.
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+authRouter.post("/logout", authenticate, authController.logout);
 
 export default authRouter;

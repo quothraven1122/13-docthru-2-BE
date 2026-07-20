@@ -25,6 +25,12 @@ export const authController = {
 
     return res.status(200).json({ user, accessToken });
   }),
-  logout: asyncHandler(async (req, res) => {}),
+  logout: asyncHandler(async (req, res) => {
+    await authService.logout(req.user.id);
+
+    res.clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS);
+
+    return res.status(200).json({ message: "로그아웃되었습니다." });
+  }),
   refreshToken: asyncHandler(async (req, res) => {}),
 };

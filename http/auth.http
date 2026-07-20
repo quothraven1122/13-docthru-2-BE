@@ -1,5 +1,5 @@
 @local_url = http://localhost:3000
-
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0M2FjOWU1LWI2NzEtNDQxNS04ZmI1LWQ1N2M1NmJjNTNlNiIsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3ODQ1MDk5ODksImV4cCI6MTc4NDUxMzU4OX0.wtA-iDSjur6_0fg1J7KdxondhPo-PrOMtaHlKtIJFmg
 ### 회원가입
 POST {{local_url}}/auth/register
 Content-Type: application/json
@@ -19,3 +19,7 @@ Content-Type: application/json
   "email" : "rlaeodud1232221@email.com",
   "password" : "123123123"
 }
+
+### 로그아웃 (위 로그인 응답의 accessToken을 붙여넣어 주세요)
+POST {{local_url}}/auth/logout
+Authorization: Bearer {{accessToken}}
