@@ -23,3 +23,7 @@ Content-Type: application/json
 ### 로그아웃 (위 로그인 응답의 accessToken을 붙여넣어 주세요)
 POST {{local_url}}/auth/logout
 Authorization: Bearer {{accessToken}}
+
+### 토큰 재발급 (로그인/회원가입 시 브라우저에 저장된 refreshToken 쿠키를 그대로 사용합니다)
+### 로그인후 토큰 재발급이 안된다면 ctrl+, => rest-client.rememberCookiesForSubsequentRequests 검색 꺼져 있다면 활성화 해주세요.
+POST {{local_url}}/auth/refresh-token

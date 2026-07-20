@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { authRepository } from "./authRepository.js";
 import { ConflictError, UnauthorizedError } from "#src/common/utils/errors.js";
 import { config } from "#src/common/configs/config.js";
-import { generateAccessToken, generateRefreshToken } from "#src/common/utils/token.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "#src/common/utils/token.js";
 
 function filterSensitiveUserData(user) {
   const { password, refreshToken, ...rest } = user;
@@ -54,5 +54,18 @@ export const authService = {
   async logout(userId) {
     await authRepository.updateRefreshToken(userId, null);
   },
-  async refresh(userId, refreshToken) {},
+  async refresh(refreshToken) {
+    const { id } = verifyRefreshToken(refreshToken);
+
+    const user = await authRepository.findById(id);
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new UnauthorizedError("유효하지 않은 요청입니다. 다시 로그인해 주세요.");
+    }
+
+    const accessToken = generateAccessToken({ id: user.id, role: user.role });
+    const newRefreshToken = generateRefreshToken({ id: user.id });
+    await authRepository.updateRefreshToken(user.id, newRefreshToken);
+
+    return { user: filterSensitiveUserData(user), accessToken, refreshToken: newRefreshToken };
+  },
 };

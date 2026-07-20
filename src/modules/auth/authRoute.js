@@ -115,4 +115,32 @@ authRouter.post("/login", validate(authSchema.loginSchema), authController.login
  */
 authRouter.post("/logout", authenticate, authController.logout);
 
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: 토큰 재발급
+ *     description: refresh token 쿠키를 검증해 새로운 access token과 refresh token을 발급합니다(refresh token은 재발급 시마다 회전됩니다).
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: 재발급 성공
+ *         headers:
+ *           Set-Cookie:
+ *             description: 새로운 refreshToken이 httpOnly 쿠키로 설정됩니다.
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RegisterResponse"
+ *       401:
+ *         description: refresh token이 없거나 유효하지 않음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+authRouter.post("/refresh-token", authController.refreshToken);
+
 export default authRouter;
