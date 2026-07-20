@@ -1,7 +1,7 @@
 import express from "express";
 import { authController } from "./authController.js";
 import { validate } from "#src/common/middlewares/validate.js";
-import { registerSchema } from "./authSchema.js";
+import { authSchema } from "./authSchema.js";
 
 const authRouter = express.Router();
 
@@ -43,8 +43,46 @@ const authRouter = express.Router();
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-authRouter.post("/register", validate(registerSchema), authController.register);
+authRouter.post("/register", validate(authSchema.registerSchema), authController.register);
 
-authRouter.post("/login", authController.login);
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: 로그인
+ *     description: 이메일/비밀번호로 로그인하여 access token(응답 바디)과 refresh token(쿠키)을 발급합니다.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/LoginRequest"
+ *     responses:
+ *       200:
+ *         description: 로그인 성공
+ *         headers:
+ *           Set-Cookie:
+ *             description: refreshToken이 httpOnly 쿠키로 설정됩니다.
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RegisterResponse"
+ *       400:
+ *         description: 요청 데이터 검증 실패
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidationErrorResponse"
+ *       401:
+ *         description: 이메일 또는 비밀번호가 올바르지 않음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+authRouter.post("/login", validate(authSchema.loginSchema), authController.login);
 
 export default authRouter;

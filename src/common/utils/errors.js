@@ -1,5 +1,3 @@
-// common/utils/errors.js
-
 /**
  * 커스텀 에러 클래스 모음
  *

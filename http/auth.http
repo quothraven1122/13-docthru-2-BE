@@ -5,8 +5,17 @@ POST {{local_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email" : "rlaeodud1232221@email.com",
-  "nickname": "김123",
+  "email" : "rlaeod2222ud1232221@email.com",
+  "nickname": "김1222223",
   "password" : "123123123",
   "passwordConfirm" : "123123123"
+}
+
+### 로그인
+POST {{local_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email" : "rlaeodud1232221@email.com",
+  "password" : "123123123"
 }

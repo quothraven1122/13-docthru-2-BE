@@ -18,7 +18,13 @@ export const authController = {
     return res.status(201).json({ user, accessToken });
   }),
 
-  login: asyncHandler(async (req, res) => {}),
+  login: asyncHandler(async (req, res) => {
+    const { user, accessToken, refreshToken } = await authService.login(req.validatedData);
+
+    res.cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+
+    return res.status(200).json({ user, accessToken });
+  }),
   logout: asyncHandler(async (req, res) => {}),
   refreshToken: asyncHandler(async (req, res) => {}),
 };
