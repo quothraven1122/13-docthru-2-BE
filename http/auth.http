@@ -1,12 +1,29 @@
 @local_url = http://localhost:3000
-
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU0M2FjOWU1LWI2NzEtNDQxNS04ZmI1LWQ1N2M1NmJjNTNlNiIsInJvbGUiOiJNRU1CRVIiLCJpYXQiOjE3ODQ1MDk5ODksImV4cCI6MTc4NDUxMzU4OX0.wtA-iDSjur6_0fg1J7KdxondhPo-PrOMtaHlKtIJFmg
 ### 회원가입
 POST {{local_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email" : "rlaeodud1232221@email.com",
-  "nickname": "김123",
+  "email" : "rlaeod2222ud1232221@email.com",
+  "nickname": "김1222223",
   "password" : "123123123",
   "passwordConfirm" : "123123123"
 }
+
+### 로그인
+POST {{local_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email" : "rlaeodud1232221@email.com",
+  "password" : "123123123"
+}
+
+### 로그아웃 (위 로그인 응답의 accessToken을 붙여넣어 주세요)
+POST {{local_url}}/auth/logout
+Authorization: Bearer {{accessToken}}
+
+### 토큰 재발급 (로그인/회원가입 시 브라우저에 저장된 refreshToken 쿠키를 그대로 사용합니다)
+### 로그인후 토큰 재발급이 안된다면 ctrl+, => rest-client.rememberCookiesForSubsequentRequests 검색 꺼져 있다면 활성화 해주세요.
+POST {{local_url}}/auth/refresh-token
