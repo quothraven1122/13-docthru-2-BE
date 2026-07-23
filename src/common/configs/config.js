@@ -4,7 +4,7 @@ const REFRESH_EXPIRES_IN_SEC = 7 * 24 * 60 * 60;
 
 export const config = {
   isProduction: process.env.NODE_ENV === "production",
-  clientOrigin: process.env.CLIENT_ORIGIN?.split(",") ?? true,
+  clientOrigin: process.env.CLIENT_ORIGIN?.split(",") ?? true, //배포한 FE주소
   jwt: {
     accessSecret: process.env.ACCESS_SECRET,
     refreshSecret: process.env.REFRESH_SECRET,
