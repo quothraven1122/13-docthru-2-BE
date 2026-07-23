@@ -8,6 +8,7 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   sameSite: config.isProduction ? "none" : "lax", //배포하는 사이트가 달라서 none 필요
   secure: config.isProduction, //http허용 불허용 로컬 환경은 http라 false가 필요
   path: "/auth/token/refresh",
+  maxAge: config.jwt.refreshExpiresInMs,
 };
 
 const ACCESS_TOKEN_COOKIE_OPTIONS = {
@@ -15,6 +16,7 @@ const ACCESS_TOKEN_COOKIE_OPTIONS = {
   sameSite: config.isProduction ? "none" : "lax", //배포하는 사이트가 달라서 none 필요
   secure: config.isProduction, //http허용 불허용 로컬 환경은 http라 false가 필요
   path: "/",
+  maxAge: config.jwt.accessExpiresInMs,
 };
 
 function setAuthCookies(res, accessToken, refreshToken) {
