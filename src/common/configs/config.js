@@ -10,8 +10,8 @@ export const config = {
     refreshSecret: process.env.REFRESH_SECRET,
     accessExpiresIn: ACCESS_EXPIRES_IN_SEC, // jsonwebtoken expiresIn용
     refreshExpiresIn: REFRESH_EXPIRES_IN_SEC,
-    accessExpiresIn: ACCESS_EXPIRES_IN_SEC * 1000, // 쿠키 maxAge용
-    refreshExpiresIn: REFRESH_EXPIRES_IN_SEC * 1000,
+    accessExpiresInMs: ACCESS_EXPIRES_IN_SEC * 1000, // 쿠키 maxAge용
+    refreshExpiresInMs: REFRESH_EXPIRES_IN_SEC * 1000,
   },
   //해시
   bcrypt: {
