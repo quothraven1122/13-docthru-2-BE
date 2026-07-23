@@ -7,11 +7,12 @@ import authRouter from "#src/modules/auth/authRoute.js";
 import reviewRouter from "#src/modules/review/reviewRoute.js";
 import errorHandler from "#src/common/middlewares/errorHandler.js";
 import { swaggerSpec } from "#src/common/configs/swagger.js";
+import { config } from "#src/common/configs/config.js";
 
 const app = express();
 const PORT = 3000;
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: config.clientOrigin, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 

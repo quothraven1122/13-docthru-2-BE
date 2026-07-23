@@ -11,13 +11,6 @@ const options = {
     servers: [{ url: "http://localhost:3000", description: "로컬 개발 서버" }],
     tags: [{ name: "Auth", description: "인증 관련 API" }],
     components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
       schemas: {
         User: {
           type: "object",
@@ -45,7 +38,6 @@ const options = {
           type: "object",
           properties: {
             user: { $ref: "#/components/schemas/User" },
-            accessToken: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
           },
         },
         LoginRequest: {
