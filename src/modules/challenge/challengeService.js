@@ -1,4 +1,5 @@
 import challengeRepository from "./challengeRepository.js";
+import { BadRequestError, NotFoundError } from "#src/common/utils/errors.js";
 
 const APPLICATION_ORDER_BY = {
   appliedAtAsc: { createdAt: "asc" },
@@ -26,6 +27,34 @@ const challengeService = {
 
     return { list, totalCount };
   },
+  async approveApplication({ challengeId, adminId }) {
+    await validateWaitingApplication(challengeId);
+
+    return challengeRepository.update(challengeId, {
+      status: "APPROVED",
+      approvedAt: new Date(),
+      approverId: adminId,
+    });
+  },
+  async rejectApplication({ challengeId, reason }) {
+    await validateWaitingApplication(challengeId);
+
+    return challengeRepository.update(challengeId, {
+      status: "REJECTED",
+      rejectReason: reason,
+    });
+  },
 };
+
+async function validateWaitingApplication(challengeId) {
+  const challenge = await challengeRepository.findById(challengeId);
+
+  if (!challenge || challenge.deletedAt) {
+    throw new NotFoundError("신청 내역을 찾을 수 없습니다.");
+  }
+  if (challenge.status !== "WAITING") {
+    throw new BadRequestError("이미 승인 또는 거절 처리된 신청입니다.");
+  }
+}
 
 export default challengeService;

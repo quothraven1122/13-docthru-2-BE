@@ -11,6 +11,14 @@ const challengeSchema = {
     status: z.enum(APPLICATION_STATUS).optional(),
     sort: z.enum(APPLICATION_SORT).default("appliedAtDesc"),
   }),
+
+  challengeIdParamsSchema: z.object({
+    challengeId: z.uuid("올바른 챌린지 ID 형식이 아닙니다."),
+  }),
+
+  rejectApplicationSchema: z.object({
+    reason: z.string().trim().min(1, "거절 사유를 입력해 주세요."),
+  }),
 };
 
 export default challengeSchema;

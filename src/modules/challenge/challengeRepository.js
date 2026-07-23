@@ -24,6 +24,12 @@ const challengeRepository = {
       },
     });
   },
+  findById(id) {
+    return prisma.challenge.findUnique({ where: { id } });
+  },
+  update(id, data) {
+    return prisma.challenge.update({ where: { id }, data });
+  },
 };
 
 export default challengeRepository;

@@ -86,4 +86,83 @@ challengeRouter.get(
   challengeController.getApplications,
 );
 
+/**
+ * @swagger
+ * /challenges/{challengeId}/approve:
+ *   patch:
+ *     summary: 신청한 신규 챌린지 승인 (어드민)
+ *     description: WAITING 상태의 챌린지 신청을 승인합니다. 승인 시 approvedAt과 approverId가 기록되고 챌린지 보기 목록에 노출됩니다.
+ *     tags: [Challenge]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: 승인 성공 (변경된 챌린지 반환)
+ *       400:
+ *         description: 이미 처리된 신청이거나 ID 형식 오류
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 신청 내역을 찾을 수 없음
+ */
+challengeRouter.patch(
+  "/:challengeId/approve",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  challengeController.approveApplication,
+);
+
+/**
+ * @swagger
+ * /challenges/{challengeId}/reject:
+ *   patch:
+ *     summary: 신청한 신규 챌린지 거절 (어드민)
+ *     description: WAITING 상태의 챌린지 신청을 거절 사유와 함께 거절합니다.
+ *     tags: [Challenge]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [reason]
+ *             properties:
+ *               reason: { type: string, example: "원문 링크가 유효하지 않습니다." }
+ *     responses:
+ *       200:
+ *         description: 거절 성공 (변경된 챌린지 반환)
+ *       400:
+ *         description: 이미 처리된 신청이거나 사유 누락
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 신청 내역을 찾을 수 없음
+ */
+// validate를 params→body 순으로 두 번 거치면 req.validatedData는 마지막(body) 기준 — challengeId는 req.params에서 읽음
+challengeRouter.patch(
+  "/:challengeId/reject",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  validate(challengeSchema.rejectApplicationSchema),
+  challengeController.rejectApplication,
+);
+
 export default challengeRouter;
