@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import authRouter from "#src/modules/auth/authRoute.js";
 import challengeRouter from "#src/modules/challenge/challengeRoute.js";
+import reviewRouter from "#src/modules/review/reviewRoute.js";
 import errorHandler from "#src/common/middlewares/errorHandler.js";
 import { swaggerSpec } from "#src/common/configs/swagger.js";
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/auth", authRouter);
+app.use("/review", reviewRouter);
 
 app.use("/challenges", challengeRouter);
 
