@@ -3,11 +3,7 @@ import { authRepository } from "./authRepository.js";
 import { ConflictError, UnauthorizedError } from "#src/common/utils/errors.js";
 import { config } from "#src/common/configs/config.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "#src/common/utils/token.js";
-
-function filterSensitiveUserData(user) {
-  const { password, refreshToken, ...rest } = user;
-  return rest;
-}
+import { filterSensitiveUserData } from "#src/common/utils/utils.js";
 
 export const authService = {
   async register({ email, nickname, password }) {

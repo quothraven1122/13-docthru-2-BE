@@ -11,7 +11,7 @@ const authRouter = express.Router();
  * /auth/register:
  *   post:
  *     summary: 회원가입
- *     description: 이메일/닉네임 중복 확인 후 유저를 생성하고 access token(응답 바디)과 refresh token(쿠키)을 발급합니다.
+ *     description: 이메일/닉네임 중복 확인 후 유저를 생성하고 access token과 refresh token을 httpOnly 쿠키로 발급합니다.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -24,7 +24,7 @@ const authRouter = express.Router();
  *         description: 회원가입 성공
  *         headers:
  *           Set-Cookie:
- *             description: refreshToken이 httpOnly 쿠키로 설정됩니다.
+ *             description: accessToken, refreshToken이 각각 httpOnly 쿠키로 설정됩니다.
  *             schema:
  *               type: string
  *         content:
@@ -51,7 +51,7 @@ authRouter.post("/register", validate(authSchema.registerSchema), authController
  * /auth/login:
  *   post:
  *     summary: 로그인
- *     description: 이메일/비밀번호로 로그인하여 access token(응답 바디)과 refresh token(쿠키)을 발급합니다.
+ *     description: 이메일/비밀번호로 로그인하여 access token과 refresh token을 httpOnly 쿠키로 발급합니다.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -64,7 +64,7 @@ authRouter.post("/register", validate(authSchema.registerSchema), authController
  *         description: 로그인 성공
  *         headers:
  *           Set-Cookie:
- *             description: refreshToken이 httpOnly 쿠키로 설정됩니다.
+ *             description: accessToken, refreshToken이 각각 httpOnly 쿠키로 설정됩니다.
  *             schema:
  *               type: string
  *         content:
@@ -91,10 +91,8 @@ authRouter.post("/login", validate(authSchema.loginSchema), authController.login
  * /auth/logout:
  *   post:
  *     summary: 로그아웃
- *     description: DB에 저장된 refresh token을 제거하고 refresh token 쿠키를 삭제합니다. access token(Authorization 헤더)이 필요합니다.
+ *     description: DB에 저장된 refresh token을 제거하고 accessToken, refreshToken 쿠키를 삭제합니다. accessToken 쿠키가 필요합니다.
  *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: 로그아웃 성공
@@ -117,7 +115,7 @@ authRouter.post("/logout", authenticate, authController.logout);
 
 /**
  * @swagger
- * /auth/refresh-token:
+ * /auth/token/refresh:
  *   post:
  *     summary: 토큰 재발급
  *     description: refresh token 쿠키를 검증해 새로운 access token과 refresh token을 발급합니다(refresh token은 재발급 시마다 회전됩니다).
@@ -127,7 +125,7 @@ authRouter.post("/logout", authenticate, authController.logout);
  *         description: 재발급 성공
  *         headers:
  *           Set-Cookie:
- *             description: 새로운 refreshToken이 httpOnly 쿠키로 설정됩니다.
+ *             description: 새로운 accessToken, refreshToken이 각각 httpOnly 쿠키로 설정됩니다.
  *             schema:
  *               type: string
  *         content:
@@ -141,6 +139,6 @@ authRouter.post("/logout", authenticate, authController.logout);
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-authRouter.post("/refresh-token", authController.refreshToken);
+authRouter.post("/token/refresh", authController.refreshToken);
 
 export default authRouter;
