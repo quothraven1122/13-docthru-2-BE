@@ -14,8 +14,6 @@ const challengeRouter = express.Router();
  *     summary: 신청한 신규 챌린지 목록 조회 (어드민)
  *     description: 어드민이 유저가 신청한 신규 챌린지 목록을 조회합니다. 제목 검색, 상태 필터, 정렬, 페이지네이션을 지원합니다.
  *     tags: [Challenge]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -93,8 +91,6 @@ challengeRouter.get(
  *     summary: 신청한 신규 챌린지 승인 (어드민)
  *     description: WAITING 상태의 챌린지 신청을 승인합니다. 승인 시 approvedAt과 approverId가 기록되고 챌린지 보기 목록에 노출됩니다.
  *     tags: [Challenge]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: challengeId
@@ -127,8 +123,6 @@ challengeRouter.patch(
  *     summary: 신청한 신규 챌린지 거절 (어드민)
  *     description: WAITING 상태의 챌린지 신청을 거절 사유와 함께 거절합니다.
  *     tags: [Challenge]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: challengeId
