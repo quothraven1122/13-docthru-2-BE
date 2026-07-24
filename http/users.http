@@ -1,0 +1,9 @@
+@local_url = http://localhost:3000
+
+### 내 정보 조회 (auth.http에서 먼저 로그인해서 accessToken 쿠키를 받아두세요)
+GET {{local_url}}/users/me
+
+### [에러] 로그인하지 않은 상태(쿠키 없음)로 조회 → 401
+### rest-client.rememberCookiesForSubsequentRequests 때문에 쿠키가 남아있다면,
+### VS Code 명령 팔레트에서 "Rest Client: Clear Cookies" 실행 후 요청해 주세요
+GET {{local_url}}/users/me
