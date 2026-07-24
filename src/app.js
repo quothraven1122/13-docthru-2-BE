@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import authRouter from "#src/modules/auth/authRoute.js";
+import translationRouter from "#src/modules/translation/translationRoute.js";
 import reviewRouter from "#src/modules/review/reviewRoute.js";
 import errorHandler from "#src/common/middlewares/errorHandler.js";
 import { swaggerSpec } from "#src/common/configs/swagger.js";
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/auth", authRouter);
+app.use("/translation", translationRouter);
 app.use("/review", reviewRouter);
 
 app.get("/", (req, res) => {
