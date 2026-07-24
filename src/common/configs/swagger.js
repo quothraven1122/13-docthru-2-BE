@@ -9,7 +9,10 @@ const options = {
       description: "docthru 서비스 API 명세서",
     },
     servers: [{ url: "http://localhost:3000", description: "로컬 개발 서버" }],
-    tags: [{ name: "Auth", description: "인증 관련 API" }],
+    tags: [
+      { name: "Auth", description: "인증 관련 API" },
+      { name: "Users", description: "유저 관련 API" },
+    ],
     components: {
       schemas: {
         User: {
