@@ -65,10 +65,12 @@ async function main() {
   }
 
   const participations = [];
+  const shuffledParticipators = faker.helpers.shuffle([...users]);
   for (let i = 0; i < COUNT; i++) {
+    // participatorId를 유저 셔플로 매번 다르게 뽑아 (participatorId, challengeId) 유니크 제약 충돌을 방지
     const participation = await prisma.participation.create({
       data: {
-        participatorId: randomItem(users).id,
+        participatorId: shuffledParticipators[i].id,
         challengeId: randomItem(challenges).id,
       },
     });
@@ -87,7 +89,33 @@ async function main() {
   }
 
   const reviews = [];
-  for (let i = 0; i < COUNT; i++) {
+
+  // 목록 조회(페이지네이션/translationId 필터링) 테스트용 - 번역글 하나에 리뷰를 몰아서 생성
+  const targetTranslation = translations[0];
+  const TARGET_REVIEW_COUNT = 15;
+  for (let i = 0; i < TARGET_REVIEW_COUNT; i++) {
+    const review = await prisma.review.create({
+      data: {
+        content: faker.lorem.sentences(2),
+        reviewerId: randomItem(users).id,
+        translationId: targetTranslation.id,
+      },
+    });
+    reviews.push(review);
+  }
+
+  // 소프트 삭제된 리뷰 (deletedAt 필터링 확인용, 목록/단건 조회에서 제외되어야 함)
+  await prisma.review.create({
+    data: {
+      content: faker.lorem.sentences(2),
+      reviewerId: randomItem(users).id,
+      translationId: targetTranslation.id,
+      deletedAt: faker.date.recent(),
+      deletionReason: "테스트용 삭제",
+    },
+  });
+
+  for (let i = 1; i < COUNT; i++) {
     const review = await prisma.review.create({
       data: {
         content: faker.lorem.sentences(2),
@@ -140,6 +168,8 @@ async function main() {
   }
 
   console.log('Seed completed: 20 records created for each model.');
+  console.log(`목록 조회 테스트용 translationId: ${targetTranslation.id} (리뷰 ${TARGET_REVIEW_COUNT}개 + 삭제된 리뷰 1개)`);
+  console.log(`테스트 로그인 계정: ${users[0].email} / Password123!`);
 }
 
 main()
