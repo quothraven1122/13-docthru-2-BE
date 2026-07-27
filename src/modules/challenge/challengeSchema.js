@@ -23,7 +23,6 @@ const challengeSchema = {
   }),
 
   getParticipantsSchema: z.object({
-    //은범님 이거 추가했어요
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().max(50).default(5),
   }),
