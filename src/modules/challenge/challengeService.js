@@ -99,6 +99,15 @@ const challengeService = {
 
     return { list, totalPageCount };
   },
+
+  async getApplicationDetail(challengeId) {
+    const challenge = await challengeRepository.findDetailById(challengeId);
+
+    if (!challenge) {
+      throw new NotFoundError("신청 내역을 찾을 수 없습니다.");
+    }
+    return challenge;
+  },
 };
 
 async function validateWaitingApplication(challengeId) {

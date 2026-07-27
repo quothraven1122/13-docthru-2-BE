@@ -86,6 +86,38 @@ challengeRouter.get(
 
 /**
  * @swagger
+ * /challenges/applications/{challengeId}:
+ *   get:
+ *     summary: 신청 상세 조회 (어드민)
+ *     description: 어드민 신청 관리에서 단건 신청의 상세 정보를 조회합니다. 승인 대기/승인/거절 화면 분기에 필요한 status, rejectReason, approvedAt을 포함합니다.
+ *     tags: [Challenge]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 신청 내역을 찾을 수 없음
+ */
+challengeRouter.get(
+  "/applications/:challengeId",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  challengeController.getApplicationDetail,
+);
+
+/**
+ * @swagger
  * /challenges/{challengeId}/approve:
  *   patch:
  *     summary: 신청한 신규 챌린지 승인 (어드민)

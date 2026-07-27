@@ -35,6 +35,11 @@ const challengeController = {
     });
     return res.status(200).json(result);
   },
+
+  async getApplicationDetail(req, res) {
+    const challenge = await challengeService.getApplicationDetail(req.params.challengeId);
+    return res.status(200).json(challenge);
+  },
 };
 
 export default challengeController;
