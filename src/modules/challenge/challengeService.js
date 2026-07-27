@@ -44,6 +44,59 @@ const challengeService = {
       rejectReason: reason,
     });
   },
+
+  async getChallengeDetail(challengeId) {
+    const challenge = await challengeRepository.findDetailById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return {
+      id: challenge.id,
+      title: challenge.title,
+      description: challenge.content,
+      link: challenge.link,
+      category: challenge.field,
+      docType: challenge.docType,
+      deadlineDate: challenge.deadline,
+      member: challenge._count.participations,
+      maxMember: challenge.headcount,
+      authorName: challenge.creator.nickname,
+    };
+  },
+
+  async getParticipants({ challengeId, page, pageSize, currentUserId }) {
+    const raw = await challengeRepository.findParticipantsRaw(challengeId);
+
+    const withLikeCount = raw.map((p) => {
+      const translations = p.translation; // 참여자당 여러 개일 수 있음
+      const allLikes = translations.flatMap((t) => t.likes);
+
+      const likeCount = allLikes.length;
+      const liked = allLikes.some((l) => l.likerId === currentUserId);
+      const latestTranslationId = translations[0]?.id ?? null; // orderBy desc라 [0]이 최신
+
+      return {
+        id: p.participator.id,
+        name: p.participator.nickname,
+        role: p.participator.grade === "EXPERT" ? "전문가" : "일반",
+        likeCount,
+        liked,
+        translationId: latestTranslationId,
+      };
+    });
+
+    withLikeCount.sort((a, b) => b.likeCount - a.likeCount);
+    const ranked = withLikeCount.map((item, idx) => ({ ...item, rank: idx + 1 }));
+
+    const totalCount = ranked.length;
+    const totalPageCount = Math.max(1, Math.ceil(totalCount / pageSize));
+    const start = (page - 1) * pageSize;
+    const list = ranked.slice(start, start + pageSize);
+
+    return { list, totalPageCount };
+  },
 };
 
 async function validateWaitingApplication(challengeId) {

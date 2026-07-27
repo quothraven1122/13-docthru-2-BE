@@ -30,6 +30,52 @@ const challengeRepository = {
   update(id, data) {
     return prisma.challenge.update({ where: { id }, data });
   },
+
+  findDetailById(id) {
+    return prisma.challenge.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        link: true,
+        field: true,
+        docType: true,
+        deadline: true,
+        headcount: true,
+        status: true,
+        deletedAt: true,
+        creator: {
+          select: { nickname: true },
+        },
+        _count: {
+          select: { participations: true },
+        },
+      },
+    });
+  },
+
+  findParticipantsRaw(challengeId) {
+    return prisma.participation.findMany({
+      where: { challengeId },
+      select: {
+        id: true,
+        participator: {
+          select: { id: true, nickname: true, grade: true },
+        },
+        translation: {
+          select: {
+            id: true,
+            createdAt: true,
+            likes: {
+              select: { likerId: true },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    });
+  },
 };
 
 export default challengeRepository;

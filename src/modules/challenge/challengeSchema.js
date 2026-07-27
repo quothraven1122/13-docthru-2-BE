@@ -1,3 +1,5 @@
+//challengeSchema.js
+
 import { z } from "zod";
 
 const APPLICATION_SORT = ["appliedAtAsc", "appliedAtDesc", "deadlineAsc", "deadlineDesc"];
@@ -18,6 +20,12 @@ const challengeSchema = {
 
   rejectApplicationSchema: z.object({
     reason: z.string().trim().min(1, "거절 사유를 입력해 주세요."),
+  }),
+
+  getParticipantsSchema: z.object({
+    //은범님 이거 추가했어요
+    page: z.coerce.number().int().positive().default(1),
+    pageSize: z.coerce.number().int().positive().max(50).default(5),
   }),
 };
 
