@@ -14,4 +14,11 @@ export const likeController = {
     const data = await likeService.getLikeCount(translationId);
     return res.status(200).json(data);
   }),
+
+  getLikeStatus: asyncHandler(async (req, res) => {
+    const likerId = req.user.id;
+    const { translationId } = req.query;
+    const data = await likeService.getLikeStatus(likerId, translationId);
+    return res.status(200).json(data);
+  }),
 };

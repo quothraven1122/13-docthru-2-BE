@@ -6,6 +6,8 @@ const likeRouter = express.Router();
 
 likeRouter.get("/count", likeController.getLikeCount);
 
+likeRouter.get("/status", authenticate, likeController.getLikeStatus);
+
 likeRouter.post("/", authenticate, likeController.toggleLike);
 
 export default likeRouter;
