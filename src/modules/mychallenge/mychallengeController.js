@@ -17,6 +17,7 @@ export const mychallengeController = {
     const result = await mychallengeService.myAppliedChallenge(id);
     return res.status(200).json(result);
   },
+  //신청한 챌린지 상세 수정
   updateMyApplication: async (req, res) => {
     const { id } = req.params;
     const result = await mychallengeService.updateMyApplication(id, req.user.id, req.validatedData);
