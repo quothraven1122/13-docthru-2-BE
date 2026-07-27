@@ -1,0 +1,27 @@
+@local_url = http://localhost:3000
+@challengeId = a2d5b972-b181-4afe-b014-2d4c709abbb2
+//테스트 ID : mychallenge@test.com / pw:Password123
+
+//내가 챌린지에 참여중인 목록
+GET {{local_url}}/mychallenges?page=1&pageSize=10
+###
+//내가 신청한 챌린지 목록
+GET {{local_url}}/mychallenges/applications
+###
+//내가 신청한 챌린지 상세 목록
+GET {{local_url}}/mychallenges/applications/{{challengeId}}
+###
+PATCH {{local_url}}/mychallenges/applications/{{challengeId}}
+Content-Type: application/json
+
+{
+    "title":"테스트",
+    "link": "https://link.info",
+    "field": "CAREER",
+    "docType": "BLOG",
+    "headcount": 3
+}
+###
+DELETE {{local_url}}/mychallenges/applications/{{challengeId}}
+
+

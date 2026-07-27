@@ -9,6 +9,7 @@ import likeRouter from "#src/modules/like/likeRoute.js";
 import translationRouter from "#src/modules/translation/translationRoute.js";
 import reviewRouter from "#src/modules/review/reviewRoute.js";
 import userRouter from "#src/modules/users/userRoute.js";
+import mychallengeRouter from "#src/modules/mychallenge/mychallengeRoute.js";
 import errorHandler from "#src/common/middlewares/errorHandler.js";
 import { swaggerSpec } from "#src/common/configs/swagger.js";
 import { config } from "#src/common/configs/config.js";
@@ -29,6 +30,7 @@ app.use("/review", reviewRouter);
 app.use("/users", userRouter);
 
 app.use("/challenges", challengeRouter);
+app.use("/mychallenges", mychallengeRouter);
 
 app.get("/", (req, res) => {
   res.send("서버가 잘 동작하고 있어요! 🎉");

@@ -1,6 +1,15 @@
-import { PrismaClient, Role, Grade, DocType, ChallengeStatus, Field, TargetType, NotificationAction } from '@prisma/client';
-import { faker } from '@faker-js/faker';
-import bcrypt from 'bcrypt';
+import {
+  PrismaClient,
+  Role,
+  Grade,
+  DocType,
+  ChallengeStatus,
+  Field,
+  TargetType,
+  NotificationAction,
+} from "@prisma/client";
+import { faker } from "@faker-js/faker";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +28,18 @@ async function main() {
   await prisma.challenge.deleteMany();
   await prisma.user.deleteMany();
 
-  const password = await bcrypt.hash('Password123!', 10);
+  const password = await bcrypt.hash("Password123!", 10);
+
+  // mychallenge API 테스트용 계정
+  const testUser = await prisma.user.create({
+    data: {
+      email: "mychallenge@test.com",
+      password,
+      nickname: "testMyChallengeUser",
+      role: Role.MEMBER,
+      grade: Grade.NORMAL,
+    },
+  });
 
   const users = [];
   for (let i = 0; i < COUNT; i++) {
@@ -63,6 +83,126 @@ async function main() {
     });
     challenges.push(challenge);
   }
+
+  const APPROVED_PARTICIPATION_COUNT = 10;
+  const EXPIRED_DEADLINE_COUNT = 3;
+  const testUserApprovedParticipations = [];
+  for (let i = 0; i < APPROVED_PARTICIPATION_COUNT; i++) {
+    const approver = randomItem(users);
+    const creator = randomItem(users);
+    const isExpired = i < EXPIRED_DEADLINE_COUNT;
+
+    const approvedChallenge = await prisma.challenge.create({
+      data: {
+        title: isExpired ? `[테스트] 데드라인 지난 완료 챌린지 ${i + 1}` : `[테스트] 참여중인 승인된 챌린지 ${i + 1}`,
+        link: faker.internet.url(),
+        content: faker.lorem.paragraphs(2),
+        field: randomItem(Object.values(Field)),
+        docType: randomItem(Object.values(DocType)),
+        deadline: isExpired ? faker.date.past() : faker.date.future(),
+        headcount: faker.number.int({ min: 1, max: 10 }),
+        status: ChallengeStatus.APPROVED,
+        creatorId: creator.id,
+        approverId: approver.id,
+        approvedAt: faker.date.recent(),
+      },
+    });
+
+    const participation = await prisma.participation.create({
+      data: {
+        participatorId: testUser.id,
+        challengeId: approvedChallenge.id,
+      },
+    });
+    testUserApprovedParticipations.push(participation);
+  }
+
+  const approverForMyApplications = randomItem(users);
+
+  const rejectedApplication = await prisma.challenge.create({
+    data: {
+      title: `[테스트] 거절된 신청 챌린지`,
+      link: faker.internet.url(),
+      content: faker.lorem.paragraphs(2),
+      field: randomItem(Object.values(Field)),
+      docType: randomItem(Object.values(DocType)),
+      deadline: faker.date.future(),
+      headcount: faker.number.int({ min: 1, max: 10 }),
+      status: ChallengeStatus.REJECTED,
+      creatorId: testUser.id,
+      approverId: approverForMyApplications.id,
+      rejectReason: "원문 링크가 유효하지 않습니다.",
+    },
+  });
+
+  const deletedApplication = await prisma.challenge.create({
+    data: {
+      title: `[테스트] 삭제(취소)된 신청 챌린지`,
+      link: faker.internet.url(),
+      content: faker.lorem.paragraphs(2),
+      field: randomItem(Object.values(Field)),
+      docType: randomItem(Object.values(DocType)),
+      deadline: faker.date.future(),
+      headcount: faker.number.int({ min: 1, max: 10 }),
+      status: ChallengeStatus.WAITING,
+      creatorId: testUser.id,
+      deletedAt: faker.date.recent(),
+      deletionReason: "테스트용 취소",
+      deleterId: testUser.id,
+    },
+  });
+
+  const approvedApplication = await prisma.challenge.create({
+    data: {
+      title: `[테스트] 승인완료된 신청 챌린지`,
+      link: faker.internet.url(),
+      content: faker.lorem.paragraphs(2),
+      field: randomItem(Object.values(Field)),
+      docType: randomItem(Object.values(DocType)),
+      deadline: faker.date.future(),
+      headcount: faker.number.int({ min: 1, max: 10 }),
+      status: ChallengeStatus.APPROVED,
+      creatorId: testUser.id,
+      approverId: approverForMyApplications.id,
+      approvedAt: faker.date.recent(),
+    },
+  });
+
+  const waitingApplication1 = await prisma.challenge.create({
+    data: {
+      title: `[테스트] 승인대기중인 신청 챌린지 1`,
+      link: faker.internet.url(),
+      content: faker.lorem.paragraphs(2),
+      field: randomItem(Object.values(Field)),
+      docType: randomItem(Object.values(DocType)),
+      deadline: faker.date.future(),
+      headcount: faker.number.int({ min: 1, max: 10 }),
+      status: ChallengeStatus.WAITING,
+      creatorId: testUser.id,
+    },
+  });
+
+  const waitingApplication2 = await prisma.challenge.create({
+    data: {
+      title: `[테스트] 승인대기중인 신청 챌린지 2`,
+      link: faker.internet.url(),
+      content: faker.lorem.paragraphs(2),
+      field: randomItem(Object.values(Field)),
+      docType: randomItem(Object.values(DocType)),
+      deadline: faker.date.future(),
+      headcount: faker.number.int({ min: 1, max: 10 }),
+      status: ChallengeStatus.WAITING,
+      creatorId: testUser.id,
+    },
+  });
+
+  const testUserApplications = [
+    rejectedApplication,
+    deletedApplication,
+    approvedApplication,
+    waitingApplication1,
+    waitingApplication2,
+  ];
 
   const participations = [];
   const shuffledParticipators = faker.helpers.shuffle([...users]);
@@ -167,8 +307,10 @@ async function main() {
     });
   }
 
-  console.log('Seed completed: 20 records created for each model.');
-  console.log(`목록 조회 테스트용 translationId: ${targetTranslation.id} (리뷰 ${TARGET_REVIEW_COUNT}개 + 삭제된 리뷰 1개)`);
+  console.log("Seed completed: 20 records created for each model.");
+  console.log(
+    `목록 조회 테스트용 translationId: ${targetTranslation.id} (리뷰 ${TARGET_REVIEW_COUNT}개 + 삭제된 리뷰 1개)`,
+  );
   console.log(`테스트 로그인 계정: ${users[0].email} / Password123!`);
 }
 
