@@ -2,14 +2,36 @@ import prisma from "#src/common/configs/prisma.js";
 
 export const translationRepository = {
   //작업물보기 눌렀을때 사용하는 코드 (참가정보 포함 - 소유권 확인용)
-  findByTranslationId(translationId) {
-    return prisma.translation.findFirst({
+  async findByTranslationId(translationId) {
+    const translationData = await prisma.translation.findFirst({
       where: {
         id: translationId,
         deletedAt: null,
       },
-      include: { participation: true },
+      include: {
+        participation: {
+          include: {
+            challenge: {
+              select: {
+                title: true,
+                link: true,
+              },
+            },
+          },
+        },
+      },
     });
+    if (!translationData) {
+      return null;
+    }
+
+    const { challenge, ...participation } = translationData.participation;
+
+    return {
+      ...translationData,
+      participation,
+      ...challenge,
+    };
   },
   //작업 도전하기 눌렀을때 작업물이 있는지 확인하는 코드
   findByParticipationId(participationId) {
