@@ -21,6 +21,20 @@ const challengeController = {
     });
     return res.status(200).json(challenge);
   },
+
+  async getChallengeDetail(req, res) {
+    const result = await challengeService.getChallengeDetail(req.params.challengeId);
+    return res.status(200).json(result);
+  },
+
+  async getParticipants(req, res) {
+    const result = await challengeService.getParticipants({
+      challengeId: req.params.challengeId,
+      ...req.validatedData,
+      currentUserId: req.user.id,
+    });
+    return res.status(200).json(result);
+  },
 };
 
 export default challengeController;
