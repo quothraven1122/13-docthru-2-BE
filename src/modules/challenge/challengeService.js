@@ -55,40 +55,42 @@ const challengeService = {
     return {
       id: challenge.id,
       title: challenge.title,
-      description: challenge.content,
+      description: challenge.content, // DB 필드명: content → API 응답명: description
       link: challenge.link,
-      category: challenge.field,
+      category: challenge.field, // DB 필드명: field → API 응답명: category
       docType: challenge.docType,
-      deadlineDate: challenge.deadline,
+      deadlineDate: challenge.deadline, // DB 필드명: deadline → API 응답명: deadlineDate
       member: challenge._count.participations,
-      maxMember: challenge.headcount,
+      maxMember: challenge.headcount, // DB 필드명: headcount → API 응답명: maxMember
       authorName: challenge.creator.nickname,
     };
   },
 
   async getParticipants({ challengeId, page, pageSize, currentUserId }) {
-    const raw = await challengeRepository.findParticipantsRaw(challengeId);
+    const participations = await challengeRepository.findParticipantsRaw(challengeId);
 
-    const withLikeCount = raw.map((p) => {
-      const translations = p.translation; // 참여자당 여러 개일 수 있음
-      const allLikes = translations.flatMap((t) => t.likes);
+    const withLikeCount = participations.map((participation) => {
+      // 참여자당 여러 개의 번역물을 제출할 수 있음
+      const translations = participation.translation;
+      const likes = translations.flatMap((translation) => translation.likes);
 
-      const likeCount = allLikes.length;
-      const liked = allLikes.some((l) => l.likerId === currentUserId);
-      const latestTranslationId = translations[0]?.id ?? null; // orderBy desc라 [0]이 최신
+      const likeCount = likes.length;
+      const liked = likes.some((like) => like.likerId === currentUserId);
+      const latestTranslationId = translations[0]?.id ?? null;
 
       return {
-        id: p.participator.id,
-        name: p.participator.nickname,
-        role: p.participator.grade === "EXPERT" ? "전문가" : "일반",
+        id: participation.participator.id,
+        name: participation.participator.nickname,
+        role: participation.participator.grade,
         likeCount,
         liked,
         translationId: latestTranslationId,
       };
     });
 
-    withLikeCount.sort((a, b) => b.likeCount - a.likeCount);
-    const ranked = withLikeCount.map((item, idx) => ({ ...item, rank: idx + 1 }));
+    const ranked = [...withLikeCount]
+      .sort((a, b) => b.likeCount - a.likeCount)
+      .map((item, idx) => ({ ...item, rank: idx + 1 }));
 
     const totalCount = ranked.length;
     const totalPageCount = Math.max(1, Math.ceil(totalCount / pageSize));
