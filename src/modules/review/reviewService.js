@@ -1,4 +1,5 @@
 import { reviewRepository } from "./reviewRepository.js";
+import { translationRepository } from "../translation/translationRepository.js";
 import { BadRequestError, NotFoundError, ForbiddenError } from "#src/common/utils/errors.js";
 
 export const reviewService = {
@@ -25,6 +26,12 @@ export const reviewService = {
     if (!translationId) {
       throw new BadRequestError("translationId가 필요합니다.");
     }
+
+    const existTranslation = translationRepository.findByTranslationId(translationId);
+    if (!existTranslation) {
+      throw new NotFoundError("번역물을 찾을 수 없습니다.");
+    }
+
     // TODO: translationId가 실제 존재하는 번역글인지 검증하는 로직이 필요
     return reviewRepository.createReview({ content, reviewerId: userId, translationId });
   },
