@@ -16,7 +16,7 @@ const router = express.Router();
  * /mychallenges:
  *   get:
  *     summary: 내가 참여한 챌린지 목록 조회
- *     description: 로그인한 유저가 참여중인 챌린지 목록을 조회합니다. 데드라인 기준 참여중/완료 필터, 제목 검색, 커서 기반 무한스크롤을 지원합니다.
+ *     description: 로그인한 유저가 참여중인 챌린지 목록을 조회합니다. 데드라인 기준 참여중/완료 필터, 제목 검색
  *     tags: [MyChallenge]
  *     parameters:
  *       - in: query
