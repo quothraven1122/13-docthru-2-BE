@@ -1,4 +1,5 @@
-import { BadRequestError, NotFoundError } from "#src/common/utils/errors.js";
+import { BadRequestError, ForbiddenError, NotFoundError } from "#src/common/utils/errors.js";
+import { promise } from "zod";
 import { mychallengeRepository } from "./mychallengeRepository.js";
 
 const SORT_TYPE = {
@@ -47,22 +48,28 @@ export const mychallengeService = {
     };
     const orderBy = sort ? SORT_TYPE[sort] : SORT_TYPE.createdAsc;
 
-    const myApplications = await mychallengeRepository.findMyApplications({ where, pageSize, page, orderBy });
-    const count = await mychallengeRepository.myApplicationsCount({ where });
+    const [myApplications, count] = await Promise.all([
+      mychallengeRepository.findMyApplications({ where, pageSize, page, orderBy }),
+      mychallengeRepository.myApplicationsCount({ where }),
+    ]);
 
     const totalPages = Math.ceil(count / pageSize);
 
     return { myApplications, totalPages };
   },
-  myAppliedChallenge: async (id) => {
+  myAppliedChallenge: async (id, userId) => {
     const challenge = await mychallengeRepository.findMyAppliedChallenge(id);
     if (!challenge) throw new NotFoundError("신청한 챌린지를 찾을 수 없습니다.");
+    if (challenge.creatorId !== userId) throw new ForbiddenError("조회할 권한이 없습니다.");
+
     return challenge;
   },
   updateMyApplication: async (id, userId, { title, link, field, docType, content, headcount, deadline }) => {
     const challenge = await mychallengeRepository.findMyAppliedChallenge(id);
     if (!challenge) throw new NotFoundError("신청을 수정할 챌린지를 찾을 수 없습니다.");
-    if (challenge.status !== "WAITING") throw new BadRequestError("챌린지를 수정할 수 없습니다.");
+    if (challenge.creatorId !== userId) throw new ForbiddenError("수정 권한이 없습니다.");
+    if (challenge.status !== "WAITING" || challenge.deleterId)
+      throw new BadRequestError("챌린지를 수정할 수 없습니다.");
 
     const where = { id, creatorId: userId };
     const data = { title, link, field, docType, content, headcount, deadline };
@@ -72,7 +79,9 @@ export const mychallengeService = {
   cancelApplication: async (userId, id) => {
     const challenge = await mychallengeRepository.findMyAppliedChallenge(id);
     if (!challenge) throw new NotFoundError("신청을 취소할 챌린지를 찾을 수 없습니다.");
-    if (challenge.status !== "WAITING") throw new BadRequestError("챌린지 신청을 취소할 수 없습니다.");
+    if (challenge.creatorId !== userId) throw new ForbiddenError("삭제 권한이 없습니다.");
+    if (challenge.status !== "WAITING" || challenge.deleterId)
+      throw new BadRequestError("챌린지 신청을 취소할 수 없습니다.");
 
     const where = { id, creatorId: userId };
     return await mychallengeRepository.deleteMyAppliedChallenge({ where });

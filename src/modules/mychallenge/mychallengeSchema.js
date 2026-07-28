@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Field, DocType, ChallengeStatus } from "@prisma/client";
 
 export const myChallengesSchema = z.object({
   cursorId: z.string().uuid().optional(),
@@ -11,18 +12,18 @@ export const myApplicationsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().default(10),
   keyword: z.string().trim().optional(),
-  status: z.enum(["WAITING", "APPROVED", "REJECTED"]).optional(),
+  status: z.enum(Object.values(ChallengeStatus)).optional(),
   sort: z.enum(["createdAsc", "createdDesc", "deadlineAsc", "deadlineDesc"]).default("createdDesc"),
 });
 
 export const updateMyApplicationSchema = z.object({
   title: z.string().trim().min(1).optional(),
   link: z.string().url("올바른 URL 형식이 아닙니다.").optional(),
-  field: z.enum(["NEXTJS", "API", "CAREER", "MODERNJS", "WEB"]).optional(),
-  docType: z.enum(["OFFICIAL", "BLOG"]).optional(),
+  field: z.enum(Object.values(Field)).optional(),
+  docType: z.enum(Object.values(DocType)).optional(),
   content: z.string().trim().min(1).optional(),
   headcount: z.coerce.number().int().positive().optional(),
-  deadline: z.coerce.date().optional(),
+  deadline: z.coerce.date().min(new Date(), { message: "마감일은 오늘 이후여야 합니다." }).optional(),
 });
 
 export const challengeIdSchema = z.object({

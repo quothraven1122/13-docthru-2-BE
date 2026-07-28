@@ -164,6 +164,8 @@ router.get(
  *         description: id 형식 오류 (uuid 아님)
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 조회할 권한이 없음
  *       404:
  *         description: 신청한 챌린지를 찾을 수 없음
  */
@@ -222,6 +224,8 @@ router.get(
  *         description: 요청 형식 오류 또는 승인 대기(WAITING) 상태가 아니어서 수정 불가
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 수정할 권한이 없음
  *       404:
  *         description: 수정할 신청 내역을 찾을 수 없음
  */
@@ -258,6 +262,8 @@ router.patch(
  *         description: id 형식 오류 또는 승인 대기 상태가 아니어서 취소 불가
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 삭제할 권한이 없음
  *       404:
  *         description: 취소할 신청 내역을 찾을 수 없음
  */
