@@ -5,7 +5,11 @@ export const mychallengeRepository = {
     return await prisma.participation.findMany({
       where,
       include: {
-        challenge: true,
+        challenge: {
+          include: {
+            _count: { select: { participations: true } },
+          },
+        },
       },
       take: pageSize + 1,
       ...(cursorId && {
