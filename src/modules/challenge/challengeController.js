@@ -1,6 +1,11 @@
 import challengeService from "./challengeService.js";
 
 const challengeController = {
+  async getChallenges(req, res) {
+    const result = await challengeService.getChallenges(req.validatedData);
+    return res.status(200).json(result);
+  },
+
   async getApplications(req, res) {
     const result = await challengeService.getApplications(req.validatedData);
     return res.status(200).json(result);

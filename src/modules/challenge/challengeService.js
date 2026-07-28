@@ -9,6 +9,42 @@ const APPLICATION_ORDER_BY = {
 };
 
 const challengeService = {
+  async getChallenges({ page, pageSize, keyword, field, docType, progress }) {
+    const now = new Date();
+
+    const where = {
+      status: "APPROVED",
+      deletedAt: null,
+      ...(keyword && { title: { contains: keyword, mode: "insensitive" } }),
+      ...(field && { field: { in: field } }),
+      ...(docType && { docType }),
+      ...(progress === "ONGOING" && { deadline: { gte: now } }),
+      ...(progress === "CLOSED" && { deadline: { lt: now } }),
+    };
+
+    const [totalCount, challenges] = await Promise.all([
+      challengeRepository.countChallenges(where),
+      challengeRepository.findChallenges({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    const list = challenges.map((challenge) => ({
+      id: challenge.id,
+      title: challenge.title,
+      field: challenge.field,
+      docType: challenge.docType,
+      deadline: challenge.deadline,
+      headcount: challenge.headcount,
+      count: challenge._count.participations,
+    }));
+
+    return { list, totalCount };
+  },
+
   async getApplications({ page, pageSize, keyword, status, sort }) {
     const where = {
       ...(keyword && { title: { contains: keyword, mode: "insensitive" } }),

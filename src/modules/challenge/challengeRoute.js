@@ -9,6 +9,77 @@ const challengeRouter = express.Router();
 
 /**
  * @swagger
+ * /challenges:
+ *   get:
+ *     summary: 챌린지 목록 조회
+ *     description: 로그인한 유저가 승인된(APPROVED) 챌린지 목록을 조회합니다. 제목 검색, 분야/문서타입/진행상태 필터, 페이지네이션을 지원합니다.
+ *     tags: [Challenge]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, minimum: 1, default: 1 }
+ *       - in: query
+ *         name: pageSize
+ *         schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+ *       - in: query
+ *         name: keyword
+ *         description: 챌린지 제목 검색어
+ *         schema: { type: string }
+ *       - in: query
+ *         name: field
+ *         description: 분야 필터, 콤마로 구분해 복수 전달 가능 (예 NEXTJS,WEB)
+ *         schema: { type: string, example: "NEXTJS,WEB" }
+ *       - in: query
+ *         name: docType
+ *         description: 문서 타입 필터
+ *         schema: { type: string, enum: [OFFICIAL, BLOG] }
+ *       - in: query
+ *         name: progress
+ *         description: 진행 상태 필터 (마감일 기준)
+ *         schema: { type: string, enum: [ONGOING, CLOSED] }
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 list:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string, format: uuid }
+ *                       title: { type: string }
+ *                       field: { type: string, enum: [NEXTJS, API, CAREER, MODERNJS, WEB] }
+ *                       docType: { type: string, enum: [OFFICIAL, BLOG] }
+ *                       deadline: { type: string, format: date-time }
+ *                       headcount: { type: integer }
+ *                       count: { type: integer, description: "현재 참여 인원 수" }
+ *                 totalCount: { type: integer, example: 42 }
+ *       400:
+ *         description: 쿼리 파라미터 검증 실패
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidationErrorResponse"
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+challengeRouter.get(
+  "/",
+  authenticate,
+  validate(challengeSchema.getChallengesSchema, "query"),
+  challengeController.getChallenges,
+);
+
+/**
+ * @swagger
  * /challenges/applications:
  *   get:
  *     summary: 신청한 신규 챌린지 목록 조회 (어드민)
