@@ -119,13 +119,9 @@ router.get("/", authenticate, validate(myChallengesSchema, "query"), mychallenge
  *                       createdAt: { type: string, format: date-time }
  *                 totalPages: { type: integer, example: 5 }
  *       400:
- *         description: id 형식 오류 (uuid 아님)
+ *         description: 쿼리 파라미터 검증 실패
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
- *       403:
- *         description: 조회할 권한이 없음
- *       404:
- *         description: 신청한 챌린지를 찾을 수 없음
  */
 router.get(
   "/applications",
