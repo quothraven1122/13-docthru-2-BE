@@ -156,6 +156,20 @@ const challengeService = {
 
     return challengeRepository.update(challengeId, data);
   },
+
+  async deleteChallenge({ challengeId, reason, adminId }) {
+    const challenge = await challengeRepository.findById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return challengeRepository.update(challengeId, {
+      deletedAt: new Date(),
+      deletionReason: reason,
+      deleterId: adminId,
+    });
+  },
 };
 
 async function validateWaitingApplication(challengeId) {

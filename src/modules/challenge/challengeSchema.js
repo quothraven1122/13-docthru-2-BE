@@ -59,6 +59,10 @@ const challengeSchema = {
     .refine((data) => Object.keys(data).length > 0, {
       message: "수정할 항목을 하나 이상 입력해 주세요.",
     }),
+
+  deleteChallengeSchema: z.object({
+    reason: z.string().trim().min(1, "삭제 사유를 입력해 주세요."),
+  }),
 };
 
 export default challengeSchema;

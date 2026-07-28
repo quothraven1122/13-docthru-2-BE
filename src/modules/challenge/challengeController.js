@@ -53,6 +53,15 @@ const challengeController = {
     });
     return res.status(200).json(challenge);
   },
+
+  async deleteChallenge(req, res) {
+    const challenge = await challengeService.deleteChallenge({
+      challengeId: req.params.challengeId,
+      reason: req.validatedData.reason,
+      adminId: req.user.id,
+    });
+    return res.status(200).json(challenge);
+  },
 };
 
 export default challengeController;

@@ -340,6 +340,48 @@ challengeRouter.patch(
 
 /**
  * @swagger
+ * /challenges/{challengeId}:
+ *   delete:
+ *     summary: 챌린지 삭제 (어드민)
+ *     description: 어드민이 삭제 사유와 함께 챌린지를 삭제(soft delete)합니다. deletedAt, deletionReason, deleterId가 기록됩니다.
+ *     tags: [Challenge]
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [reason]
+ *             properties:
+ *               reason: { type: string, example: "원문 링크가 만료되어 삭제합니다." }
+ *     responses:
+ *       200:
+ *         description: 삭제 성공 (삭제 처리된 챌린지 반환)
+ *       400:
+ *         description: 삭제 사유 누락
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 챌린지를 찾을 수 없거나 이미 삭제됨
+ */
+challengeRouter.delete(
+  "/:challengeId",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  validate(challengeSchema.deleteChallengeSchema),
+  challengeController.deleteChallenge,
+);
+
+/**
+ * @swagger
  * /challenges/{challengeId}/participants:
  *   get:
  *     summary: 챌린지 참여자 목록 조회
