@@ -88,13 +88,6 @@ const options = {
             createdAt: { type: "string", format: "date-time" },
           },
         },
-        LikeToggleRequest: {
-          type: "object",
-          required: ["translationId"],
-          properties: {
-            translationId: { type: "string", format: "uuid", example: "c1a2b3d4-1234-4a5b-8c9d-abcdef123456" },
-          },
-        },
         LikeToggleResponse: {
           type: "object",
           description: "liked가 true면 like 객체가 함께, false면 like 필드 없이 반환됩니다.",
