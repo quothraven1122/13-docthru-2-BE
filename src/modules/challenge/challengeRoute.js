@@ -293,6 +293,53 @@ challengeRouter.get(
 
 /**
  * @swagger
+ * /challenges/{challengeId}:
+ *   patch:
+ *     summary: 챌린지 수정 (어드민)
+ *     description: 어드민이 진행 중인 챌린지에 이상이 있을 경우 수정합니다. 전달한 필드만 부분 수정됩니다.
+ *     tags: [Challenge]
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title: { type: string }
+ *               link: { type: string, format: uri }
+ *               content: { type: string }
+ *               field: { type: string, enum: [NEXTJS, API, CAREER, MODERNJS, WEB] }
+ *               docType: { type: string, enum: [OFFICIAL, BLOG] }
+ *               deadline: { type: string, format: date-time }
+ *               headcount: { type: integer, minimum: 1 }
+ *     responses:
+ *       200:
+ *         description: 수정 성공 (수정된 챌린지 반환)
+ *       400:
+ *         description: 수정할 항목이 없거나 형식 오류
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 챌린지를 찾을 수 없음
+ */
+challengeRouter.patch(
+  "/:challengeId",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  validate(challengeSchema.updateChallengeSchema),
+  challengeController.updateChallenge,
+);
+
+/**
+ * @swagger
  * /challenges/{challengeId}/participants:
  *   get:
  *     summary: 챌린지 참여자 목록 조회

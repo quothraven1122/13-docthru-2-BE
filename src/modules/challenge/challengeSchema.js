@@ -1,5 +1,3 @@
-//challengeSchema.js
-
 import { z } from "zod";
 
 const APPLICATION_SORT = ["appliedAtAsc", "appliedAtDesc", "deadlineAsc", "deadlineDesc"];
@@ -47,6 +45,20 @@ const challengeSchema = {
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().max(50).default(5),
   }),
+
+  updateChallengeSchema: z
+    .object({
+      title: z.string().trim().min(1, "제목을 입력해 주세요.").optional(),
+      link: z.url("올바른 링크 형식이 아닙니다.").optional(),
+      content: z.string().trim().min(1, "내용을 입력해 주세요.").optional(),
+      field: z.enum(FIELD_VALUES).optional(),
+      docType: z.enum(DOC_TYPE_VALUES).optional(),
+      deadline: z.coerce.date().optional(),
+      headcount: z.coerce.number().int().positive().optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+      message: "수정할 항목을 하나 이상 입력해 주세요.",
+    }),
 };
 
 export default challengeSchema;

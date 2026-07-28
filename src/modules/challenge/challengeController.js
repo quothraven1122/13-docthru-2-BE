@@ -45,6 +45,14 @@ const challengeController = {
     const challenge = await challengeService.getApplicationDetail(req.params.challengeId);
     return res.status(200).json(challenge);
   },
+
+  async updateChallenge(req, res) {
+    const challenge = await challengeService.updateChallenge({
+      challengeId: req.params.challengeId,
+      data: req.validatedData,
+    });
+    return res.status(200).json(challenge);
+  },
 };
 
 export default challengeController;
