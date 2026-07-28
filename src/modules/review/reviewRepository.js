@@ -14,6 +14,9 @@ export const reviewRepository = {
         cursor: { id: cursorId },
       }),
       orderBy: { createdAt: "desc" },
+      include: {
+        reviewer: { select: { id: true, nickname: true } },
+      },
     });
   },
   //단건조회
@@ -22,6 +25,9 @@ export const reviewRepository = {
       where: {
         id: reviewId,
         deletedAt: null,
+      },
+      include: {
+        reviewer: { select: { id: true, nickname: true } },
       },
     });
   },
