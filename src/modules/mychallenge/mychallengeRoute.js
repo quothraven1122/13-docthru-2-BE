@@ -119,9 +119,13 @@ router.get("/", authenticate, validate(myChallengesSchema, "query"), mychallenge
  *                       createdAt: { type: string, format: date-time }
  *                 totalPages: { type: integer, example: 5 }
  *       400:
- *         description: 쿼리 파라미터 검증 실패
+ *         description: id 형식 오류 (uuid 아님)
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 조회할 권한이 없음
+ *       404:
+ *         description: 신청한 챌린지를 찾을 수 없음
  */
 router.get(
   "/applications",
@@ -160,12 +164,27 @@ router.get(
  *                 deadline: { type: string, format: date-time }
  *                 status: { type: string, enum: [WAITING, APPROVED, REJECTED] }
  *                 createdAt: { type: string, format: date-time }
+ *                 rejectReason: { type: string, nullable: true, example: "원문 링크가 유효하지 않습니다." }
+ *                 deletedAt: { type: string, format: date-time, nullable: true }
+ *                 deletionReason: { type: string, nullable: true, example: "테스트용 취소" }
+ *                 approver:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     id: { type: string, format: uuid }
+ *                     nickname: { type: string, example: "닉네임" }
+ *                 deleter:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     id: { type: string, format: uuid }
+ *                     nickname: { type: string, example: "닉네임" }
  *       400:
  *         description: id 형식 오류 (uuid 아님)
  *       401:
  *         description: 인증 토큰이 없거나 유효하지 않음
  *       403:
- *         description: 조회할 권한이 없음
+ *         description: 본인의 신청이 아니어서 조회 권한이 없음
  *       404:
  *         description: 신청한 챌린지를 찾을 수 없음
  */
