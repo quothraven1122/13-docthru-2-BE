@@ -6,13 +6,13 @@ const likeRouter = express.Router();
 
 /**
  * @swagger
- * /like/count:
+ * /like/{translationId}/count:
  *   get:
  *     summary: 좋아요 개수 조회
  *     description: 특정 번역물의 좋아요 총 개수를 조회합니다. 인증이 필요하지 않습니다.
  *     tags: [Like]
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: translationId
  *         required: true
  *         schema:
@@ -33,17 +33,17 @@ const likeRouter = express.Router();
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-likeRouter.get("/count", likeController.getLikeCount);
+likeRouter.get("/:translationId/count", likeController.getLikeCount);
 
 /**
  * @swagger
- * /like/status:
+ * /like/{translationId}/status:
  *   get:
  *     summary: 좋아요 여부 조회
  *     description: 로그인한 유저가 특정 번역물에 좋아요를 눌렀는지 조회합니다. accessToken 쿠키 인증이 필요합니다.
  *     tags: [Like]
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: translationId
  *         required: true
  *         schema:
@@ -70,7 +70,7 @@ likeRouter.get("/count", likeController.getLikeCount);
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-likeRouter.get("/status", authenticate, likeController.getLikeStatus);
+likeRouter.get("/:translationId/status", authenticate, likeController.getLikeStatus);
 
 /**
  * @swagger

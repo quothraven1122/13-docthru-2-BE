@@ -40,25 +40,6 @@ export const translationRepository = {
     };
   },
 
-  // findByTranslationId(translationId) {
-  //     return prisma.translation.findFirst({
-  //       where: {
-  //         id: translationId,
-  //         deletedAt: null,
-  //       },
-  //       include: {
-  //         participation: {
-  //           include: {
-  //             participator: {
-  //               select: { nickname: true },
-  //             },
-  //             challenge: true,
-  //           },
-  //         },
-  //       },
-  //     });
-  //   },
-
   //작업 도전하기 눌렀을때 작업물이 있는지 확인하는 코드
   findByParticipationId(participationId) {
     return prisma.translation.findFirst({
