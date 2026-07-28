@@ -44,6 +44,10 @@ const challengeRepository = {
         deadline: true,
         headcount: true,
         status: true,
+        approvedAt: true,
+        rejectReason: true,
+        createdAt: true,
+        deletedAt: true,
         deletedAt: true,
         creator: {
           select: { nickname: true },
