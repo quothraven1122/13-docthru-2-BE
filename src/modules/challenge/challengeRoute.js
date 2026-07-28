@@ -86,6 +86,38 @@ challengeRouter.get(
 
 /**
  * @swagger
+ * /challenges/applications/{challengeId}:
+ *   get:
+ *     summary: 신청 상세 조회 (어드민)
+ *     description: 어드민 신청 관리에서 단건 신청의 상세 정보를 조회합니다. 승인 대기/승인/거절 화면 분기에 필요한 status, rejectReason, approvedAt을 포함합니다.
+ *     tags: [Challenge]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       403:
+ *         description: 어드민 권한 없음
+ *       404:
+ *         description: 신청 내역을 찾을 수 없음
+ */
+challengeRouter.get(
+  "/applications/:challengeId",
+  authenticate,
+  authorizeAdmin,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  challengeController.getApplicationDetail,
+);
+
+/**
+ * @swagger
  * /challenges/{challengeId}/approve:
  *   patch:
  *     summary: 신청한 신규 챌린지 승인 (어드민)
@@ -157,6 +189,69 @@ challengeRouter.patch(
   validate(challengeSchema.challengeIdParamsSchema, "params"),
   validate(challengeSchema.rejectApplicationSchema),
   challengeController.rejectApplication,
+);
+
+/**
+ * @swagger
+ * /challenges/{challengeId}:
+ *   get:
+ *     summary: 챌린지 상세 조회
+ *     description: 로그인한 유저만 조회 가능합니다. 제목, 설명, 원문 링크, 분야, 마감일, 참여 인원, 작성자 등을 반환합니다.
+ *     tags: [Challenge]
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *       400:
+ *         description: ID 형식 오류
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *       404:
+ *         description: 챌린지를 찾을 수 없음
+ */
+challengeRouter.get(
+  "/:challengeId",
+  authenticate,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  challengeController.getChallengeDetail,
+);
+
+/**
+ * @swagger
+ * /challenges/{challengeId}/participants:
+ *   get:
+ *     summary: 챌린지 참여자 목록 조회
+ *     description: 로그인한 유저만 조회 가능합니다. 참여자를 좋아요 수 기준으로 정렬하여 페이지네이션으로 반환하며, 각 참여자에 대한 로그인 유저의 좋아요 여부(liked)를 포함합니다.
+ *     tags: [Challenge]
+ *     parameters:
+ *       - in: path
+ *         name: challengeId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, minimum: 1, default: 1 }
+ *       - in: query
+ *         name: pageSize
+ *         schema: { type: integer, minimum: 1, maximum: 50, default: 5 }
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *       400:
+ *         description: 파라미터 검증 실패
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ */
+challengeRouter.get(
+  "/:challengeId/participants",
+  authenticate,
+  validate(challengeSchema.challengeIdParamsSchema, "params"),
+  validate(challengeSchema.getParticipantsSchema, "query"),
+  challengeController.getParticipants,
 );
 
 export default challengeRouter;
