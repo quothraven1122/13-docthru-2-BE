@@ -12,6 +12,7 @@ const options = {
     tags: [
       { name: "Auth", description: "인증 관련 API" },
       { name: "Users", description: "유저 관련 API" },
+      { name: "Like", description: "좋아요 관련 API" },
     ],
     components: {
       schemas: {
@@ -76,6 +77,35 @@ const options = {
               },
             },
             date: { type: "string", format: "date-time" },
+          },
+        },
+        Like: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid", example: "b3f1c2a0-1234-4a5b-8c9d-abcdef123456" },
+            likerId: { type: "string", format: "uuid" },
+            translationId: { type: "string", format: "uuid" },
+            createdAt: { type: "string", format: "date-time" },
+          },
+        },
+        LikeToggleResponse: {
+          type: "object",
+          description: "liked가 true면 like 객체가 함께, false면 like 필드 없이 반환됩니다.",
+          properties: {
+            liked: { type: "boolean", example: true },
+            like: { $ref: "#/components/schemas/Like" },
+          },
+        },
+        LikeCountResponse: {
+          type: "object",
+          properties: {
+            count: { type: "integer", example: 12 },
+          },
+        },
+        LikeStatusResponse: {
+          type: "object",
+          properties: {
+            isLiked: { type: "boolean", example: true },
           },
         },
       },

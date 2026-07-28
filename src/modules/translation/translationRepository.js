@@ -15,7 +15,12 @@ export const translationRepository = {
               select: {
                 title: true,
                 link: true,
+                field: true,
+                docType: true,
               },
+            },
+            participator: {
+              select: { nickname: true },
             },
           },
         },
@@ -25,14 +30,16 @@ export const translationRepository = {
       return null;
     }
 
-    const { challenge, ...participation } = translationData.participation;
+    const { challenge, participator, ...participation } = translationData.participation;
 
     return {
       ...translationData,
       participation,
       ...challenge,
+      ...participator,
     };
   },
+
   //작업 도전하기 눌렀을때 작업물이 있는지 확인하는 코드
   findByParticipationId(participationId) {
     return prisma.translation.findFirst({
