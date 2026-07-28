@@ -27,7 +27,13 @@ export const mychallengeRepository = {
     return await prisma.challenge.count({ where });
   },
   findMyAppliedChallenge: async (id) => {
-    return await prisma.challenge.findUnique({ where: { id } });
+    return await prisma.challenge.findUnique({
+      where: { id },
+      include: {
+        approver: { select: { id: true, nickname: true } },
+        deleter: { select: { id: true, nickname: true } },
+      },
+    });
   },
   updateMyApplication: async ({ where, data }) => {
     return await prisma.challenge.update({ where, data });
