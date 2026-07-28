@@ -72,7 +72,6 @@ const challengeRepository = {
         rejectReason: true,
         createdAt: true,
         deletedAt: true,
-        deletedAt: true,
         creator: {
           select: { nickname: true },
         },
