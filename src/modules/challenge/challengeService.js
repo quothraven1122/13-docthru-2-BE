@@ -61,7 +61,7 @@ const challengeService = {
       docType: challenge.docType,
       deadlineDate: challenge.deadline, // DB 필드명: deadline → API 응답명: deadlineDate
       member: challenge._count.participations,
-      maxMember: challenge.headcount, // DB 필드명: headcount → API 응답명: maxMember
+      headcount: challenge.headcount,
       authorName: challenge.creator.nickname,
       isAdmin: currentUserRole === "ADMIN",
     };
