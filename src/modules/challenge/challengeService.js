@@ -63,6 +63,7 @@ const challengeService = {
 
     return { list, totalCount };
   },
+
   async approveApplication({ challengeId, adminId }) {
     await validateWaitingApplication(challengeId);
 
@@ -72,6 +73,7 @@ const challengeService = {
       approverId: adminId,
     });
   },
+
   async rejectApplication({ challengeId, reason }) {
     await validateWaitingApplication(challengeId);
 
@@ -143,6 +145,30 @@ const challengeService = {
       throw new NotFoundError("신청 내역을 찾을 수 없습니다.");
     }
     return challenge;
+  },
+
+  async updateChallenge({ challengeId, data }) {
+    const challenge = await challengeRepository.findById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return challengeRepository.update(challengeId, data);
+  },
+
+  async deleteChallenge({ challengeId, reason, adminId }) {
+    const challenge = await challengeRepository.findById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return challengeRepository.update(challengeId, {
+      deletedAt: new Date(),
+      deletionReason: reason,
+      deleterId: adminId,
+    });
   },
 };
 
