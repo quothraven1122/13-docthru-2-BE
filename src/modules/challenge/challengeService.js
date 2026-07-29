@@ -99,7 +99,7 @@ const challengeService = {
       docType: challenge.docType,
       deadlineDate: challenge.deadline, // DB 필드명: deadline → API 응답명: deadlineDate
       member: challenge._count.participations,
-      maxMember: challenge.headcount, // DB 필드명: headcount → API 응답명: maxMember
+      headcount: challenge.headcount,
       authorName: challenge.creator.nickname,
     };
   },
@@ -108,7 +108,6 @@ const challengeService = {
     const participations = await challengeRepository.findParticipantsRaw(challengeId);
 
     const withLikeCount = participations.map((participation) => {
-      // 참여자당 여러 개의 번역물을 제출할 수 있음
       const translations = participation.translation;
       const likes = translations.flatMap((translation) => translation.likes);
 
