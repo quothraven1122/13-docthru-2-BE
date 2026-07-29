@@ -7,6 +7,13 @@ const SORT_TYPE = {
   createdDesc: { createdAt: "desc" },
   deadlineAsc: { deadline: "asc" },
   deadlineDesc: { deadline: "desc" },
+  WAITING: [{ deletedAt: { sort: "asc", nulls: "first" } }, { status: "asc" }], // deletedAt 없으면 삭제상태가 아니니까 앞으로 배치, 그후 enum값 순으로 정렬.
+  REJECTED: [{ deletedAt: { sort: "asc", nulls: "first" } }, { status: "desc" }],
+  APPROVED: [
+    { approvedAt: { sort: "desc", nulls: "last" } }, // approvedAt 없으면 승인상태가 아니니까 뒤로 배치한다.
+    { rejectReason: { sort: "asc", nulls: "first" } }, //approvedAt이 있는데 rejectReason이 없으면 신청승인 상태로 보고 앞으로 정렬.
+    { createdAt: "desc" },
+  ],
 };
 
 export const mychallengeService = {
@@ -44,9 +51,8 @@ export const mychallengeService = {
     const where = {
       creatorId: userId,
       ...(keyword && { title: { contains: keyword, mode: "insensitive" } }),
-      ...(status && { status: status }),
     };
-    const orderBy = sort ? SORT_TYPE[sort] : SORT_TYPE.createdAsc;
+    const orderBy = sort ? SORT_TYPE[sort] : SORT_TYPE.WAITING;
 
     const [myApplications, count] = await Promise.all([
       mychallengeRepository.findMyApplications({ where, pageSize, page, orderBy }),

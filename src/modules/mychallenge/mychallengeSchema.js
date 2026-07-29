@@ -12,8 +12,9 @@ export const myApplicationsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().default(10),
   keyword: z.string().trim().optional(),
-  status: z.enum(Object.values(ChallengeStatus)).optional(),
-  sort: z.enum(["createdAsc", "createdDesc", "deadlineAsc", "deadlineDesc"]).default("createdDesc"),
+  sort: z
+    .enum([...Object.values(ChallengeStatus), "createdAsc", "createdDesc", "deadlineAsc", "deadlineDesc"])
+    .default("createdDesc"),
 });
 
 export const updateMyApplicationSchema = z.object({
