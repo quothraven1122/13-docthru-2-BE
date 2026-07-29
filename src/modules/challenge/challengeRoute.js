@@ -80,6 +80,51 @@ challengeRouter.get(
 
 /**
  * @swagger
+ * /challenges:
+ *   post:
+ *     summary: 챌린지 생성 신청
+ *     description: 로그인한 유저가 새 챌린지를 생성 신청합니다. WAITING 상태로 생성되며 어드민 승인/거절 대상이 됩니다.
+ *     tags: [Challenge]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, link, content, field, docType, deadline, headcount]
+ *             properties:
+ *               title: { type: string, example: "Next.js - App Router: Routing Fundamentals" }
+ *               link: { type: string, format: uri, example: "https://nextjs.org/docs/app/routing" }
+ *               content: { type: string, example: "챌린지 상세 설명입니다." }
+ *               field: { type: string, enum: [NEXTJS, API, CAREER, MODERNJS, WEB] }
+ *               docType: { type: string, enum: [OFFICIAL, BLOG] }
+ *               deadline: { type: string, format: date-time }
+ *               headcount: { type: integer, minimum: 1, example: 10 }
+ *     responses:
+ *       201:
+ *         description: 생성 성공 (생성된 챌린지 반환)
+ *       400:
+ *         description: 요청 형식 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidationErrorResponse"
+ *       401:
+ *         description: 인증 토큰이 없거나 유효하지 않음
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+challengeRouter.post(
+  "/create",
+  authenticate,
+  validate(challengeSchema.createChallengeSchema),
+  challengeController.createChallenge,
+);
+
+/**
+ * @swagger
  * /challenges/applications:
  *   get:
  *     summary: 신청한 신규 챌린지 목록 조회 (어드민)

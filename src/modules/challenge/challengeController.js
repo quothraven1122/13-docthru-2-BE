@@ -1,6 +1,14 @@
 import challengeService from "./challengeService.js";
 
 const challengeController = {
+  async createChallenge(req, res) {
+    const challenge = await challengeService.createChallenge({
+      creatorId: req.user.id,
+      data: req.validatedData,
+    });
+    return res.status(201).json(challenge);
+  },
+
   async getChallenges(req, res) {
     const result = await challengeService.getChallenges(req.validatedData);
     return res.status(200).json(result);
