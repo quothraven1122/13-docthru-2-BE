@@ -10,6 +10,7 @@ export const mychallengeRepository = {
             _count: { select: { participations: true } },
           },
         },
+        translation: { select: { id: true } },
       },
       take: pageSize + 1,
       ...(cursorId && {
