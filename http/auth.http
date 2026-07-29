@@ -15,8 +15,8 @@ POST {{local_url}}/auth/login
 Content-Type: application/json
 
 {
-  "email" : "rlaeodud1232221@email.com",
-  "password" : "123123123"
+  "email" : "mychallenge@test.com",
+  "password" : "Password123!"
 }
 
 ### 로그아웃 (로그인 시 브라우저에 저장된 accessToken 쿠키를 그대로 사용합니다)
