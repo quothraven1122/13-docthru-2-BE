@@ -1,6 +1,30 @@
 import prisma from "#src/common/configs/prisma.js";
 
 const challengeRepository = {
+  countChallenges(where) {
+    return prisma.challenge.count({ where });
+  },
+
+  findChallenges({ where, orderBy, skip, take }) {
+    return prisma.challenge.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      select: {
+        id: true,
+        title: true,
+        field: true,
+        docType: true,
+        deadline: true,
+        headcount: true,
+        _count: {
+          select: { participations: true },
+        },
+      },
+    });
+  },
+
   countApplications(where) {
     return prisma.challenge.count({ where });
   },
@@ -47,7 +71,6 @@ const challengeRepository = {
         approvedAt: true,
         rejectReason: true,
         createdAt: true,
-        deletedAt: true,
         deletedAt: true,
         creator: {
           select: { nickname: true },
