@@ -16,6 +16,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors({ origin: config.clientOrigin, credentials: true }));
+console.log(config.clientOrigin);
 app.use(express.json());
 app.use(cookieParser());
 
