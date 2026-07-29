@@ -9,6 +9,42 @@ const APPLICATION_ORDER_BY = {
 };
 
 const challengeService = {
+  async getChallenges({ page, pageSize, keyword, field, docType, progress }) {
+    const now = new Date();
+
+    const where = {
+      status: "APPROVED",
+      deletedAt: null,
+      ...(keyword && { title: { contains: keyword, mode: "insensitive" } }),
+      ...(field && { field: { in: field } }),
+      ...(docType && { docType }),
+      ...(progress === "ONGOING" && { deadline: { gte: now } }),
+      ...(progress === "CLOSED" && { deadline: { lt: now } }),
+    };
+
+    const [totalCount, challenges] = await Promise.all([
+      challengeRepository.countChallenges(where),
+      challengeRepository.findChallenges({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    const list = challenges.map((challenge) => ({
+      id: challenge.id,
+      title: challenge.title,
+      field: challenge.field,
+      docType: challenge.docType,
+      deadline: challenge.deadline,
+      headcount: challenge.headcount,
+      count: challenge._count.participations,
+    }));
+
+    return { list, totalCount };
+  },
+
   async getApplications({ page, pageSize, keyword, status, sort }) {
     const where = {
       ...(keyword && { title: { contains: keyword, mode: "insensitive" } }),
@@ -27,6 +63,7 @@ const challengeService = {
 
     return { list, totalCount };
   },
+
   async approveApplication({ challengeId, adminId }) {
     await validateWaitingApplication(challengeId);
 
@@ -36,6 +73,7 @@ const challengeService = {
       approverId: adminId,
     });
   },
+
   async rejectApplication({ challengeId, reason }) {
     await validateWaitingApplication(challengeId);
 
@@ -107,6 +145,30 @@ const challengeService = {
       throw new NotFoundError("신청 내역을 찾을 수 없습니다.");
     }
     return challenge;
+  },
+
+  async updateChallenge({ challengeId, data }) {
+    const challenge = await challengeRepository.findById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return challengeRepository.update(challengeId, data);
+  },
+
+  async deleteChallenge({ challengeId, reason, adminId }) {
+    const challenge = await challengeRepository.findById(challengeId);
+
+    if (!challenge || challenge.deletedAt) {
+      throw new NotFoundError("챌린지를 찾을 수 없습니다.");
+    }
+
+    return challengeRepository.update(challengeId, {
+      deletedAt: new Date(),
+      deletionReason: reason,
+      deleterId: adminId,
+    });
   },
 };
 

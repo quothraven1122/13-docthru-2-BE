@@ -28,4 +28,13 @@ export const likeService = {
     const count = await likeRepository.countLikes(translationId);
     return { count };
   },
+
+  async getLikeStatus(likerId, translationId) {
+    if (!translationId) {
+      throw new BadRequestError("translationId가 필요합니다.");
+    }
+
+    const existing = await likeRepository.findById(likerId, translationId);
+    return { isLiked: !!existing };
+  },
 };
