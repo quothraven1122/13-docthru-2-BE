@@ -4,8 +4,29 @@ import { z } from "zod";
 
 const APPLICATION_SORT = ["appliedAtAsc", "appliedAtDesc", "deadlineAsc", "deadlineDesc"];
 const APPLICATION_STATUS = ["WAITING", "APPROVED", "REJECTED"];
+const FIELD_VALUES = ["NEXTJS", "API", "CAREER", "MODERNJS", "WEB"];
+const DOC_TYPE_VALUES = ["OFFICIAL", "BLOG"];
+const CHALLENGE_PROGRESS = ["ONGOING", "CLOSED"];
 
 const challengeSchema = {
+  // 챌린지 목록 조회 (일반 유저용, APPROVED만 노출)
+  getChallengesSchema: z.object({
+    page: z.coerce.number().int().positive().default(1),
+    pageSize: z.coerce.number().int().positive().max(50).default(10),
+    keyword: z.string().trim().optional(),
+    // 콤마로 구분된 문자열로 전달 (예: field=NEXTJS,WEB)
+    field: z
+      .string()
+      .optional()
+      .transform((value) => (value ? value.split(",") : undefined))
+      .refine((values) => !values || values.every((value) => FIELD_VALUES.includes(value)), {
+        message: "유효하지 않은 field 값입니다.",
+      }),
+    docType: z.enum(DOC_TYPE_VALUES).optional(),
+    // 진행중(마감일 이전) / 마감(마감일 지남) 필터
+    progress: z.enum(CHALLENGE_PROGRESS).optional(),
+  }),
+
   getApplicationsSchema: z.object({
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().max(50).default(10),
