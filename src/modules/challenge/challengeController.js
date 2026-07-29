@@ -23,7 +23,7 @@ const challengeController = {
   },
 
   async getChallengeDetail(req, res) {
-    const result = await challengeService.getChallengeDetail(req.params.challengeId, req.user.role);
+    const result = await challengeService.getChallengeDetail(req.params.challengeId);
     return res.status(200).json(result);
   },
 

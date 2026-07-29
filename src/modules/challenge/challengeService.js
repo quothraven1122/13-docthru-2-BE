@@ -45,7 +45,7 @@ const challengeService = {
     });
   },
 
-  async getChallengeDetail(challengeId, currentUserRole) {
+  async getChallengeDetail(challengeId) {
     const challenge = await challengeRepository.findDetailById(challengeId);
 
     if (!challenge || challenge.deletedAt) {
@@ -63,7 +63,6 @@ const challengeService = {
       member: challenge._count.participations,
       headcount: challenge.headcount,
       authorName: challenge.creator.nickname,
-      isAdmin: currentUserRole === "ADMIN",
     };
   },
 
