@@ -80,7 +80,7 @@ challengeRouter.get(
 
 /**
  * @swagger
- * /challenges:
+ * /challenges/create:
  *   post:
  *     summary: 챌린지 생성 신청
  *     description: 로그인한 유저가 새 챌린지를 생성 신청합니다. WAITING 상태로 생성되며 어드민 승인/거절 대상이 됩니다.
