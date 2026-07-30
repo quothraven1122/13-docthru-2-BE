@@ -1,0 +1,111 @@
+@local_url = http://localhost:3000
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzOTQ2ZjI1LWExMDktNGU3YS04MjE1LWZiYWM2ZGYwMGQ3MCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4NDYyMzgxOCwiZXhwIjoxNzg0NjI3NDE4fQ.tZmL3fdnZQodVAbKup1DUWWCToMHPWZAbvaDiWMub1U
+@translationId = 75ab2f44-08ed-4e16-91bb-101b62a7ee88
+# npm run db:seed 콘솔에 출력되는 "목록 조회 테스트용 translationId"를 붙여넣어 주세요 (리뷰 15개 + 삭제된 리뷰 1개가 있는 번역글)
+@reviewId = 8dd11f18-3f0f-4888-80b2-fbba5c2242ee
+# 아래 "리뷰 생성" 응답의 id를 붙여넣어 주세요 (내가 작성한 리뷰 - 수정/삭제 성공 케이스용)
+@otherReviewId = 아래 "리뷰 목록 조회" 응답에서 아무 항목의 id를 붙여넣어 주세요 (seed로 만들어진, 내가 작성하지 않은 리뷰 - 403 확인용)
+
+### 리뷰 목록 조회
+GET {{local_url}}/review?translationId={{translationId}}&take=3
+
+### 리뷰 목록 조회 - 다음 페이지 (cursor 사용, 이전 응답 마지막 항목의 id를 사용)
+GET {{local_url}}/review?translationId={{translationId}}&take=3&cursor={{reviewId}}
+
+### 리뷰 단건 조회
+GET {{local_url}}/review/{{reviewId}}
+
+### 리뷰 생성
+POST {{local_url}}/review
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "translationId": "{{translationId}}",
+  "content": "테스트 리뷰 생성입니다."
+}
+
+### 리뷰 수정 (본인이 작성한 리뷰)
+PATCH {{local_url}}/review/{{reviewId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "content": "수정된 리뷰 내용입니다."
+}
+
+### 리뷰 삭제 (본인이 작성한 리뷰)
+DELETE {{local_url}}/review/{{reviewId}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "deletionReason": "테스트용 삭제 요청입니다."
+}
+
+### [에러] translationId 없이 목록 조회 → 400
+GET {{local_url}}/review
+
+### [에러] 존재하지 않는 리뷰 단건 조회 → 404
+GET {{local_url}}/review/00000000-0000-0000-0000-000000000000
+
+### [에러] 인증 토큰 없이 리뷰 생성 → 401
+POST {{local_url}}/review
+Content-Type: application/json
+
+{
+  "translationId": "{{translationId}}",
+  "content": "토큰 없이 생성 시도"
+}
+
+### [에러] content 없이 리뷰 생성 → 400 (zod 검증)
+POST {{local_url}}/review
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "translationId": "{{translationId}}"
+}
+
+### [에러] 인증 토큰 없이 리뷰 수정 → 401
+PATCH {{local_url}}/review/{{reviewId}}
+Content-Type: application/json
+
+{
+  "content": "토큰 없이 수정 시도"
+}
+
+### [에러] content 없이 리뷰 수정 → 400 (zod 검증)
+PATCH {{local_url}}/review/{{reviewId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{}
+
+### [에러] 존재하지 않는 리뷰 수정 → 404
+PATCH {{local_url}}/review/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "content": "존재하지 않는 리뷰 수정 시도"
+}
+
+### [에러] 본인이 작성하지 않은 리뷰 수정 → 403
+PATCH {{local_url}}/review/{{otherReviewId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "content": "남의 리뷰 수정 시도"
+}
+
+### [에러] 인증 토큰 없이 리뷰 삭제 → 401
+DELETE {{local_url}}/review/{{reviewId}}
+
+### [에러] 존재하지 않는 리뷰 삭제 → 404
+DELETE {{local_url}}/review/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{accessToken}}
+
+### [에러] 본인이 작성하지 않은 리뷰 삭제 → 403 (주의: ADMIN 계정으로 로그인했다면 관리자 권한으로 삭제가 허용되어 403 대신 200이 납니다. MEMBER 계정으로 테스트해주세요)
+DELETE {{local_url}}/review/{{otherReviewId}}
+Authorization: Bearer {{accessToken}}

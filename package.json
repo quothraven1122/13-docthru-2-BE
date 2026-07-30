@@ -1,0 +1,58 @@
+{
+  "name": "13-docthru-2-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "cross-env NODE_ENV=production node src/app.js",
+    "build": "npx prisma generate",
+    "db:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
+    "db:migrate:deploy": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "db:reset": "dotenv -e .env.development -- npx prisma migrate reset",
+    "db:push": "dotenv -e .env.development -- npx prisma db push",
+    "db:seed": "dotenv -e .env.development -- node prisma/seed.js",
+    "db:studio": "dotenv -e .env.development -- npx prisma studio",
+    "prepare": "husky"
+  },
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quothraven1122/13-docthru-2-BE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/quothraven1122/13-docthru-2-BE/issues"
+  },
+  "homepage": "https://github.com/quothraven1122/13-docthru-2-BE#readme",
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-jwt": "^8.5.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@faker-js/faker": "^10.4.0",
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
+    "husky": "^9.1.7",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.4",
+    "prisma": "^6.19.3"
+  }
+}

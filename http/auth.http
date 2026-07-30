@@ -1,0 +1,27 @@
+@local_url = http://localhost:3000
+### 회원가입
+POST {{local_url}}/auth/register
+Content-Type: application/json
+
+{
+  "email" : "rlaeod2222ud1232221@email.com",
+  "nickname": "김1222223",
+  "password" : "123123123",
+  "passwordConfirm" : "123123123"
+}
+
+### 로그인
+POST {{local_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email" : "mychallenge@test.com",
+  "password" : "Password123!"
+}
+
+### 로그아웃 (로그인 시 브라우저에 저장된 accessToken 쿠키를 그대로 사용합니다)
+POST {{local_url}}/auth/logout
+
+### 토큰 재발급 (로그인/회원가입 시 브라우저에 저장된 refreshToken 쿠키를 그대로 사용합니다)
+### 로그인후 토큰 재발급이 안된다면 ctrl+, => rest-client.rememberCookiesForSubsequentRequests 검색 꺼져 있다면 활성화 해주세요.
+POST {{local_url}}/auth/token/refresh
