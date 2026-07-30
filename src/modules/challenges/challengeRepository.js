@@ -1,6 +1,10 @@
 import prisma from "#src/common/configs/prisma.js";
 
 const challengeRepository = {
+  create(data) {
+    return prisma.challenge.create({ data });
+  },
+
   countChallenges(where) {
     return prisma.challenge.count({ where });
   },

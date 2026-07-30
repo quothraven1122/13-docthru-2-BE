@@ -46,6 +46,18 @@ const challengeSchema = {
     pageSize: z.coerce.number().int().positive().max(50).default(5),
   }),
 
+  createChallengeSchema: z.object({
+    title: z.string().trim().min(1, "제목을 입력해 주세요."),
+    link: z.url("올바른 링크 형식이 아닙니다."),
+    content: z.string().trim().min(1, "내용을 입력해 주세요."),
+    field: z.enum(FIELD_VALUES),
+    docType: z.enum(DOC_TYPE_VALUES),
+    deadline: z.coerce.date().refine((date) => date > new Date(), {
+      message: "데드라인은 오늘 이후로 설정해 주세요.",
+    }),
+    headcount: z.coerce.number().int().positive(),
+  }),
+
   updateChallengeSchema: z
     .object({
       title: z.string().trim().min(1, "제목을 입력해 주세요.").optional(),

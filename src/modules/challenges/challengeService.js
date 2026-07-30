@@ -9,6 +9,10 @@ const APPLICATION_ORDER_BY = {
 };
 
 const challengeService = {
+  async createChallenge({ creatorId, data }) {
+    return challengeRepository.create({ ...data, creatorId });
+  },
+
   async getChallenges({ page, pageSize, keyword, field, docType, progress }) {
     const now = new Date();
 

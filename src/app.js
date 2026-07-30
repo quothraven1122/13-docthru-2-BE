@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import authRouter from "#src/modules/auth/authRoute.js";
-import challengeRouter from "#src/modules/challenge/challengeRoute.js";
+import challengeRouter from "#src/modules/challenges/challengeRoute.js";
 import translationRouter from "#src/modules/translation/translationRoute.js";
 import reviewRouter from "#src/modules/review/reviewRoute.js";
 import userRouter from "#src/modules/users/userRoute.js";

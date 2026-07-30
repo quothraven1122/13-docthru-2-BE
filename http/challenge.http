@@ -1,0 +1,38 @@
+@local_url = http://localhost:3000
+@challengeId = 여기에 challengeId를 붙여넣어 주세요 (아래 "챌린지 생성" 또는 "챌린지 목록 조회" 응답의 id)
+
+### ===================================================
+### 아래 요청들은 accessToken 쿠키로 인증합니다.
+### 먼저 auth.http에서 로그인해서 쿠키를 받아두세요.
+### - 일반 회원 섹션: MEMBER 계정으로 로그인
+### - 어드민 섹션: ADMIN 계정으로 로그인 (예: admin@test.com / Admin1234!)
+### ===================================================
+
+### 챌린지 생성 신청 (MEMBER 로그인 필요)
+POST {{local_url}}/challenges/create
+Content-Type: application/json
+
+{
+  "title": "Next.js - App Router: Routing Fundamentals",
+  "link": "https://nextjs.org/docs/app/routing",
+  "content": "챌린지 상세 설명입니다.",
+  "field": "NEXTJS",
+  "docType": "OFFICIAL",
+  "deadline": "2099-12-31T23:59:59Z",
+  "headcount": 10
+}
+
+### [에러] 데드라인이 과거 → 400
+POST {{local_url}}/challenges/create
+Content-Type: application/json
+
+{
+  "title": "과거 데드라인 테스트",
+  "link": "https://example.com",
+  "content": "내용",
+  "field": "NEXTJS",
+  "docType": "OFFICIAL",
+  "deadline": "2020-01-01T00:00:00Z",
+  "headcount": 10
+}
+
