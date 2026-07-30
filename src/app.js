@@ -14,7 +14,7 @@ import { swaggerSpec } from "#src/common/configs/swagger.js";
 import { config } from "#src/common/configs/config.js";
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 app.use(cors({ origin: config.clientOrigin, credentials: true }));
 app.use(express.json());
