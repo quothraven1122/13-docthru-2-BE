@@ -78,12 +78,13 @@ const challengeService = {
     });
   },
 
-  async rejectApplication({ challengeId, reason }) {
+  async rejectApplication({ challengeId, reason, userId }) {
     await validateWaitingApplication(challengeId);
 
     return challengeRepository.update(challengeId, {
       status: "REJECTED",
       rejectReason: reason,
+      approverId: userId,
     });
   },
 

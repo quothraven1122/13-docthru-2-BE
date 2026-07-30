@@ -31,6 +31,7 @@ const challengeController = {
     const challenge = await challengeService.rejectApplication({
       challengeId: req.params.challengeId,
       reason: req.validatedData.reason,
+      userId: req.user.id,
     });
     return res.status(200).json(challenge);
   },
