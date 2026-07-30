@@ -15,28 +15,22 @@ export const translationService = {
     return translation;
   },
 
-  // 번역물 생성 (challengeId+userId로 참가정보 확인 후 생성, 이미 있으면 기존 데이터 반환)
   async createTranslation(userId, challengeId) {
-    // TODO: participationRepository가 생기면 이 조회는 그쪽으로 옮기기
-    const participation = await prisma.participation.findUnique({
+    // 참가 정보가 없으면 새로 생성, 있으면 기존 정보 사용
+    const participation = await prisma.participation.upsert({
       where: {
         participatorId_challengeId: { participatorId: userId, challengeId },
       },
+      update: {},
+      create: { participatorId: userId, challengeId },
     });
-
-    if (!participation) {
-      throw new NotFoundError("참가 정보를 찾을 수 없습니다.");
-    }
 
     const existing = await translationRepository.findByParticipationId(participation.id);
     if (existing) {
-      // 존재하면 여기에 있는 id 사용해서 접근하도록 요청 하면 됩니다.
       return existing;
     }
-    //여기서 반환되는 ID(translation)값으로 요청하면됩니다.
     return translationRepository.createTranslation(participation.id);
   },
-
   // 번역물 내용 수정 (본인 작성 건만 허용)
   async updateTranslation(userId, translationId, content) {
     const translation = await translationRepository.findByTranslationId(translationId);
